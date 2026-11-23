@@ -1,0 +1,57 @@
+{
+  "$comment": "Domain harness config for ONE app repo. Lives at <app-repo>/.factory/config.json. Defaults are fully local: no tracker, remote, or deploy is touched until you change them.",
+
+  "tracker": {
+    "type": "local",
+    "$examples": {
+      "github": { "type": "github", "repo": "owner/app", "ready_label": "factory:ready" },
+      "jira": { "type": "jira", "base_url": "https://your-site.atlassian.net",
+                "jql": "project = APP AND status = \"Ready for Dev\" AND labels = factory",
+                "status_map": { "in_progress": "In Progress", "in_review": "In Review", "blocked": "Blocked", "done": "Done" } },
+      "linear": { "type": "linear", "team_key": "APP", "ready_state": "Todo", "label": "factory",
+                  "status_map": { "in_progress": "In Progress", "in_review": "In Review", "blocked": "Blocked", "done": "Done" } }
+    }
+  },
+
+  "vcs": {
+    "type": "local",
+    "base_branch": "main",
+    "$examples": { "github": { "type": "github", "repo": "owner/app", "base_branch": "main", "merge_method": "squash", "draft": false } }
+  },
+
+  "envs": {
+    "dev": { "type": "none", "local_url": "http://localhost:5173" },
+    "stg": { "type": "none" },
+    "$examples": {
+      "url_poll": { "type": "url_poll", "url": "https://dev.example.com", "version_path": "/api/version", "timeout_minutes": 30 },
+      "command": { "type": "command", "command": "./scripts/deployed.sh", "timeout_minutes": 45 }
+    }
+  },
+
+  "areas": {
+    "backend": ["backend/"],
+    "frontend": ["frontend/"]
+  },
+
+  "commands": {
+    "backend_test": "cd backend && go test ./...",
+    "backend_lint": "cd backend && go vet ./...",
+    "backend_codegen": "cd backend && sqlc generate && go generate ./...",
+    "frontend_test": "cd frontend && npm test -- --run",
+    "frontend_lint": "cd frontend && npm run lint && npx tsc --noEmit",
+    "e2e": "cd frontend && npx playwright test",
+    "local_up": "docker compose up -d",
+    "local_down": "docker compose down",
+    "security": "cd backend && govulncheck ./... ; cd ../frontend && npm audit --omit=dev"
+  },
+
+  "policy": {
+    "$comment": "Optional per-repo overrides of the factory merge policy. Can only be read by code, not agents.",
+    "auto_merge_max_risk": "low",
+    "protected_paths": ["backend/db/migrations/**", "**/auth/**", ".github/workflows/**"]
+  },
+
+  "domain_reviewers": [
+    { "name": "business-rules", "prompt": "reviewers/business-rules.md", "model": "sonnet" }
+  ]
+}

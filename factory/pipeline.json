@@ -1,0 +1,129 @@
+{
+  "$comment": "Deterministic state machine. Agents decide outcomes; this file decides what happens next. Statuses: pass | fail | changes_requested | needs_human | reject | skip | pending.",
+  "start": "intake",
+  "terminal": {
+    "complete": "Ticket done, shipped and QA'd.",
+    "rejected": "Intake decided not to build.",
+    "blocked": "Failed past max attempts or hit an unrecoverable error. Human must look.",
+    "awaiting_human": "Policy requires a human decision (high risk, approver unsure). Resume with `factory human <job> approve|reject|retry`."
+  },
+  "stages": [
+    {
+      "id": "intake",
+      "kind": "agent",
+      "agents": ["intake"],
+      "on": { "pass": "workspace", "reject": "rejected", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "workspace",
+      "kind": "script",
+      "run": "workspace",
+      "on": { "pass": "spec", "fail": "blocked" }
+    },
+    {
+      "id": "spec",
+      "kind": "agent",
+      "agents": ["spec-writer"],
+      "on": { "pass": "build", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "build",
+      "kind": "agents",
+      "agents": [
+        { "name": "backend-builder", "when": "area:backend" },
+        { "name": "frontend-builder", "when": "area:frontend" }
+      ],
+      "parallel": false,
+      "max_attempts": 4,
+      "on": { "pass": "test", "fail": "build", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "test",
+      "kind": "agents",
+      "agents": [
+        { "name": "unit-test-engineer" },
+        { "name": "e2e-test-engineer", "when": "area:frontend" }
+      ],
+      "parallel": false,
+      "on": { "pass": "security", "fail": "build" }
+    },
+    {
+      "id": "security",
+      "kind": "agent",
+      "agents": ["security-engineer"],
+      "on": { "pass": "gate", "fail": "build", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "gate",
+      "kind": "script",
+      "run": "gate",
+      "max_attempts": 4,
+      "on": { "pass": "pr", "fail": "build" }
+    },
+    {
+      "id": "pr",
+      "kind": "script",
+      "run": "open_pr",
+      "on": { "pass": "review", "fail": "blocked" }
+    },
+    {
+      "id": "review",
+      "kind": "agents",
+      "agents": [
+        { "name": "code-reviewer" },
+        { "name": "security-reviewer" },
+        { "name": "ux-reviewer", "when": "area:frontend" }
+      ],
+      "parallel": true,
+      "include_domain_reviewers": true,
+      "max_attempts": 3,
+      "on": { "pass": "approve", "changes_requested": "build", "fail": "build", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "approve",
+      "kind": "agent",
+      "agents": ["approver"],
+      "on": { "pass": "merge", "changes_requested": "build", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "merge",
+      "kind": "script",
+      "run": "merge",
+      "on": { "pass": "deploy_dev", "fail": "blocked", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "deploy_dev",
+      "kind": "script",
+      "run": "wait_deploy",
+      "env": "dev",
+      "on": { "pass": "qa_dev", "fail": "blocked" }
+    },
+    {
+      "id": "qa_dev",
+      "kind": "agent",
+      "agents": ["qa-validator"],
+      "env": "dev",
+      "on": { "pass": "deploy_stg", "fail": "blocked", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "deploy_stg",
+      "kind": "script",
+      "run": "wait_deploy",
+      "env": "stg",
+      "on": { "pass": "qa_stg", "fail": "blocked" }
+    },
+    {
+      "id": "qa_stg",
+      "kind": "agent",
+      "agents": ["qa-validator"],
+      "env": "stg",
+      "on": { "pass": "close", "fail": "blocked", "needs_human": "awaiting_human" }
+    },
+    {
+      "id": "close",
+      "kind": "script",
+      "run": "close_ticket",
+      "on": { "pass": "complete", "fail": "blocked" }
+    }
+  ]
+}
