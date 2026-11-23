@@ -1,16 +1,10 @@
-# Software Factory — instructions for Codex and other agents
+# Forgeline for Codex and other agents
 
-Same rules as `CLAUDE.md`. The factory is harness-neutral:
+Forgeline is harness-neutral at its core: the `forgeline` CLI owns state, and each agent task is a
+markdown brief plus a role file.
 
-- The engine is `bin/factory` (plain CLI, JSON in/out).
-- Each agent task is a markdown brief at `brief_path`; the agent writes JSON to `result_path`.
+- Headless with Codex: `forgeline run --runner codex` (uses `codex exec` per task, sandbox `workspace-write`).
+- Manual: `forgeline next --json` gives tasks with `brief_path`, `role_path`, `result_path`, `cwd`;
+  run each with any agent, then `forgeline complete <job>`.
 
-Codex orchestration (planned, see `docs/roadmap.md`):
-
-```bash
-bin/factory next --json | jq -c '.[]' | while read -r t; do
-  codex exec --cd "$(jq -r .cwd <<<"$t")" \
-    "Read $(jq -r .brief_path <<<"$t") and follow it. Write the result JSON to $(jq -r .result_path <<<"$t")."
-done
-# then: bin/factory complete <job> for each job
-```
+Contributors: see CONTRIBUTING.md.

@@ -1,0 +1,10 @@
+{
+  "name": "forgeline",
+  "version": "0.2.0",
+  "description": "Agentic software factory harness: ticket to shipped feature with factory agents, a deterministic gate, merge policy in code, guard hooks and pluggable trackers.",
+  "author": { "name": "Nabwinsaud", "url": "https://github.com/Nabwinsaud" },
+  "homepage": "https://github.com/Nabwinsaud/forgeline",
+  "repository": "https://github.com/Nabwinsaud/forgeline",
+  "license": "MIT",
+  "keywords": ["software-factory", "agents", "harness", "ci", "code-review", "tdd", "automation", "workflow"]
+}

@@ -1,97 +1,108 @@
-# Forgeline — agentic software factory
+<p align="center">
+  <img src="assets/icon.svg" width="96" alt="Forgeline">
+</p>
 
-An agentic software factory that takes work from ticket to shipped feature.
+<h1 align="center">Forgeline</h1>
 
-## How it is put together
+<p align="center">
+  <strong>An agentic software factory that takes work from ticket to shipped feature.</strong><br>
+  A Claude Code plugin harness: factory agents, a deterministic gate, merge policy in code,<br>
+  guard hooks, rule packs and pluggable trackers, for any repo and any business.
+</p>
 
-| Part | Where |
-|---|---|
-| **model** | per-agent model in `factory/config.json → models` (opus builds, sonnet reviews, haiku for cheap checks) |
-| **prompt** | per-agent role in `base/agents/*.md` |
-| **base harness** | this repo: pipeline state machine, gates, merge policy, adapters, agent roles. Same for every app |
-| **domain harness** | `<app-repo>/.factory/`: business rules, invariants, checks, per-agent notes, extra reviewers, tracker/env config. One per app |
+---
 
-Every agent gets one composed **brief** = role + domain rules + agent notes + ticket/spec/feedback +
-output contract. The brief is plain markdown, so any runner can use it (Claude subagent, `claude -p`,
-Agent SDK, `codex exec`).
+## Install
+
+In Claude Code:
+
+```text
+/plugin marketplace add Nabwinsaud/forgeline
+/plugin install forgeline@forgeline
+```
+
+or in one step (Claude Code 2.1.275+): `/plugin install forgeline --marketplace Nabwinsaud/forgeline`
+
+Then, inside **your app repo**:
+
+```text
+/forgeline:init          # detects your stack, writes .factory/, interviews you about your business
+/forgeline:ticket add a health endpoint
+/forgeline:run           # the factory takes it from here
+```
+
+Requirements: Claude Code, git, Python 3.10+ (macOS/Linux ship it). Optional: `gh`, `gitleaks`, `codex`.
+
+## What you get
+
+| | | |
+|---|---|---|
+| **12 factory agents** | intake, spec-writer, backend/frontend builders, unit & e2e test engineers, security engineer, code / security / UX reviewers, approver, QA validator | each with its own tools (reviewers are read-only), model and preloaded skills |
+| **20 skills** | 7 commands (`/forgeline:run`, `init`, `status`, `approve`, `ticket`, `doctor`, `report`) and 13 engineering skills (TDD, verification, specs, review, security, API design, migrations, Go, React, Python, Playwright, QA, git) | |
+| **Engine** | `forgeline` CLI on your PATH: a deterministic state machine with locks, retries, worktrees, a headless runner, metrics | agents judge, code decides |
+| **Guard hooks** | block force-push, agents pushing to main or merging, agents editing the gate/policy, edits to generated code, secrets in code; profiles `minimal` · `standard` · `strict` | active only in repos with `.factory/` |
+| **Rule packs** | always-on standards for common, Go, TypeScript/React, Python, installed into your repo by `init` | |
+| **Adapters** | trackers: local · GitHub · Jira · Linear; git: local · GitHub; environments: none · URL poll · any command | add one in a single file |
 
 ## Architecture
 
 <p align="center">
-  <img src="docs/assets/architecture.svg" alt="Forgeline architecture: work sources, base harness (orchestrator, subagents, engine, policy, adapters), app repo domain harness, delivery" width="100%">
+  <img src="docs/assets/architecture.svg" alt="Forgeline architecture" width="100%">
 </p>
+
+- **Base harness** (this plugin): the same for every app. Agents, skills, hooks, engine, policy, adapters.
+- **Domain harness** (`.factory/` in your repo): what makes it *your* factory. `domain.md` (business rules
+  and invariants every agent reads), `checks.sh` (your merge gate), `config.json` (tracker, environments,
+  policy, models), `reviewers/` (your own expert reviewers, e.g. privacy or finance).
 
 ## Pipeline
 
 <p align="center">
-  <img src="docs/assets/pipeline.svg" alt="Forgeline pipeline: plan, build and verify, review and merge, release and QA, with feedback loops back to build" width="100%">
+  <img src="docs/assets/pipeline.svg" alt="Forgeline pipeline" width="100%">
 </p>
 
-- **Agents judge, code decides.** Agents return `pass | fail | changes_requested | needs_human | reject | skip`.
-  `factory/pipeline.json` maps each outcome to the next stage. Agents never merge, push to base, or touch tickets.
-- **Deterministic gate.** `.factory/checks.sh` (build, vet, tests, codegen freshness, secrets) must pass on the
-  exact commit that gets merged.
-- **Merge policy in code** (`sf/policy.py`): auto-merge only `low` risk with LGTM + all reviewers passing + no
-  protected paths. Everything else → `awaiting_human`.
-- **Feedback loops.** Failed tests, gate output and review findings are fed into the next build attempt's brief.
-  Max attempts per stage, then `blocked`.
-- **Durable.** All state is in `factory/state/jobs/<id>/` (job.json, briefs, results). Kill the session, run
-  `/factory-run` again, it resumes.
-- **Parallel.** Each job gets its own git worktree; `concurrency` jobs run at once. Reviewers run in parallel.
-- **Observable.** Time per stage, attempts, and cost (when agents report usage) in `bin/factory status`.
+- **Agents judge, code decides.** Agents return `pass | fail | changes_requested | needs_human | reject | skip`;
+  `pipeline.json` decides what happens next. Agents never merge, push the base branch or touch tickets, and
+  the guard hooks enforce that.
+- **Deterministic gate.** `.factory/checks.sh` must pass on the exact commit that gets merged. Agents cannot
+  edit it.
+- **Merge policy in code.** Auto-merge only up to the risk level you allow; protected paths always go to a
+  human. New repos start with auto-merge **off**.
+- **Feedback loops.** Test, security, gate and review failures are fed into the next build attempt. There
+  are max attempts, then the job is `blocked`.
+- **Durable and parallel.** All state lives in `.factory/state/`, so you can stop anytime and resume. One
+  git worktree per job, jobs run in parallel, and reviewers run in parallel.
+- **Observable.** Time, attempts and real cost per stage: `forgeline report`.
 
-## Pluggable adapters
+## Two ways to run
 
-| Kind | Built in | Default |
+| | Interactive | Headless |
 |---|---|---|
-| Tracker | `local` (files), `github` (issues + labels), `jira` (REST), `linear` (GraphQL) | `local` |
-| VCS | `local` (branch + local merge), `github` (push, `gh pr`, merge) | `local` |
-| Env | `none`, `url_poll` (wait until `/version` shows merge sha), `command` (any CI) | `none` |
+| How | `/forgeline:run` in Claude Code | `forgeline run` (cron, CI, a server) |
+| Agents | Claude Code subagents (`forgeline:<role>`) | `claude -p` per task, or `--runner codex` |
+| Cost tracking | from agent reports | real token usage and $ from the runner |
 
-Defaults touch nothing outside your machine. Credentials come only from env vars
-(`JIRA_EMAIL`, `JIRA_API_TOKEN`, `LINEAR_API_KEY`) or your existing `gh` login, never from config files.
-Add a tracker = one file in `sf/adapters/` implementing `list_ready / set_status / comment`.
+## Make it yours
 
-## Quick start (fully local)
-
-```bash
-bin/factory init                                   # creates factory/config.json
-bin/factory project add myapp /path/to/app-repo --scaffold   # adds <repo>/.factory/ domain harness
-# edit /path/to/app-repo/.factory/{domain.md,config.json,checks.sh}
-bin/factory ticket add myapp "Add health endpoint" --body "GET /healthz returns 200 {status:ok}"
-claude                                             # in this repo
-> /factory-run myapp
+```text
+.factory/
+├── domain.md          what the business is, invariants, high-risk areas, glossary, test accounts
+├── checks.sh          your gate: build · lint · test · codegen freshness · secrets · your own checks
+├── config.json        tracker · git host · dev/stg URLs · policy · models · hook profile
+├── reviewers/*.md     extra reviewers that run in parallel with code/security/UX
+└── agents/<role>.md   extra notes for one role (e.g. QA test accounts)
 ```
 
-Other commands:
+See [docs/getting-started.md](docs/getting-started.md), [docs/configuration.md](docs/configuration.md),
+[docs/hooks.md](docs/hooks.md), [docs/architecture.md](docs/architecture.md).
 
-```bash
-bin/factory status [job]                 # where everything is, time, cost
-bin/factory human <job> approve|reject|retry [--stage build] --note "..."
-bin/factory next --json                  # what the orchestrator calls each tick
-python3 -m unittest discover tests       # pipeline tests with simulated agents
-```
+## Safety
 
-Requirements: Python 3.10+ (stdlib only), git, Claude Code. `gh` only for GitHub adapters.
+- Hooks act only in repos that opted in (`.factory/config.json`); the rest of your projects are untouched.
+- Credentials come from env vars or your existing `gh` login, never from config files.
+- QA agents only get the dev/stg URLs and test accounts you list. Production is never a target.
+- Ticket text is untrusted input: limit who can mark tickets ready for the factory.
 
-## Layout
+## License
 
-```
-bin/factory                 CLI (the only interface orchestrators use)
-sf/                         engine, state, policy, prompt composition, adapters
-factory/pipeline.json       the state machine
-factory/config.example.json concurrency, models, merge policy, projects
-base/agents/*.md            12 agent roles (base harness prompts)
-domain-template/.factory/   copied into each app repo (domain harness)
-.claude/commands/           /factory-run, /factory-status, /factory-add
-tests/                      end-to-end pipeline tests
-docs/                       architecture, adapters, roadmap
-```
-
-## Safety notes
-
-- Start with `vcs.type = local` and `auto_merge_max_risk = "none"` on any repo you care about; loosen later.
-- `protected_paths` (migrations, auth, CI, infra) always need a human.
-- QA agents only get dev/stg URLs and test accounts from the domain harness. Production is never a target.
-- Treat ticket text as untrusted input: it reaches agent prompts. Keep the ready label/state restricted to
-  people you trust.
+MIT

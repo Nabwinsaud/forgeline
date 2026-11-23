@@ -1,0 +1,51 @@
+{
+  "$comment": "Forgeline domain harness for this repo. Defaults are fully local: no tracker, remote or deploy target is touched until you change them. Docs: docs/configuration.md",
+
+  "tracker": {
+    "type": "local",
+    "$examples": {
+      "github": { "type": "github", "repo": "owner/app", "ready_label": "factory:ready" },
+      "jira": { "type": "jira", "base_url": "https://your-site.atlassian.net",
+                "jql": "project = APP AND status = \"Ready for Dev\" AND labels = factory",
+                "status_map": { "in_progress": "In Progress", "in_review": "In Review", "blocked": "Blocked", "done": "Done" } },
+      "linear": { "type": "linear", "team_key": "APP", "ready_state": "Todo", "label": "factory",
+                  "status_map": { "in_progress": "In Progress", "in_review": "In Review", "blocked": "Blocked", "done": "Done" } }
+    }
+  },
+
+  "vcs": {
+    "type": "local",
+    "base_branch": "main",
+    "$examples": { "github": { "type": "github", "repo": "owner/app", "base_branch": "main", "merge_method": "squash" } }
+  },
+
+  "envs": {
+    "dev": { "type": "none", "local_url": "http://localhost:5173" },
+    "stg": { "type": "none" },
+    "$examples": {
+      "url_poll": { "type": "url_poll", "url": "https://dev.example.com", "version_path": "/api/version", "timeout_minutes": 30 },
+      "command": { "type": "command", "command": "./scripts/is-deployed.sh", "timeout_minutes": 45 }
+    }
+  },
+
+  "areas": {},
+  "commands": {},
+
+  "policy": {
+    "auto_merge_max_risk": "none",
+    "protected_paths": ["**/migrations/**", "**/auth/**", ".github/workflows/**", ".factory/**"]
+  },
+
+  "hooks": {
+    "profile": "standard",
+    "$comment": "minimal | standard | strict — see docs/hooks.md"
+  },
+
+  "models": {
+    "$comment": "Optional per-repo overrides, e.g. \"backend-builder\": \"opus\""
+  },
+
+  "domain_reviewers": [
+    { "name": "business-rules", "prompt": "reviewers/business-rules.md", "model": "sonnet" }
+  ]
+}

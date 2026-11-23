@@ -1,0 +1,21 @@
+# Testing
+
+- Write the test first. See it fail for the right reason, then make it pass.
+- Every acceptance criterion maps to at least one test that fails if the behavior breaks.
+- Every bug fix starts with a regression test that reproduces the bug.
+- Test behavior and outcomes, not implementation details or which mocks were called.
+- Name tests after the behavior and condition, readable as a sentence.
+- One behavior per test; arrange / act / assert clearly separated.
+- Cover unhappy paths: validation errors, not found, forbidden, conflicts, empty results.
+- Use a real database for data-access tests. Do not mock your own SQL or ORM.
+- Fake only what you do not own or cannot control: third-party HTTP, time, randomness, ids.
+- Tests are deterministic: no sleeps, no wall-clock dependence, no network to the internet.
+- Each test creates its own data and cleans up; no reliance on order or shared state.
+- Run the whole suite before finishing, not only new tests.
+- Never skip, focus, delete, or weaken a test to make the suite pass.
+- Never lower coverage thresholds or add ignores to get green.
+- Changed logic, including error branches, is covered by tests.
+- A failing test that predates your change must be shown failing on base and reported, not hidden.
+- Keep test code to the same quality bar as production code.
+- Keep the fast suite fast; move slow, environment-heavy tests behind the repo's integration/e2e tags.
+- Test data uses obviously fake values; never copy real customer data into fixtures.

@@ -4,11 +4,12 @@
 
 | Who | Owns | Never does |
 |---|---|---|
-| **Engine** (`sf/engine.py` + `pipeline.json`) | state, transitions, attempts, locks, script stages | judgment calls |
-| **Policy** (`sf/policy.py`) | whether a merge is allowed | trust an agent's claim about risk alone |
-| **Agents** (`base/agents/` + domain overlay) | judgment: triage, spec, code, tests, reviews, QA | merge, push base, change tickets, change state |
-| **Orchestrator** (Claude session via `/factory-run`) | moving tasks between engine and agents | decide outcomes |
-| **Adapters** (`sf/adapters`, `sf/vcs.py`, `sf/envs.py`) | talking to trackers, git hosts, environments | pipeline logic |
+| **Engine** (`forgeline/engine.py` + `pipeline.json`) | state, transitions, attempts, locks, script stages | judgment calls |
+| **Policy** (`forgeline/policy.py`) | whether a merge is allowed | trust an agent's claim about risk alone |
+| **Agents** (`agents/` plugin subagents + domain overlay) | judgment: triage, spec, code, tests, reviews, QA | merge, push base, change tickets, change state |
+| **Orchestrator** (`/forgeline:run` or headless `forgeline run`) | moving tasks between engine and agents | decide outcomes |
+| **Adapters** (`forgeline/adapters`, `vcs.py`, `envs.py`) | talking to trackers, git hosts, environments | pipeline logic |
+| **Guard hooks** (`hooks/guard.py`) | blocking unsafe tool calls in factory repos | business decisions |
 
 ## Job lifecycle
 
@@ -29,17 +30,17 @@ complete(job):
 ## Files per job
 
 ```
-factory/state/jobs/<id>/
+.factory/state/jobs/<id>/
   job.json                      the job (stage, status, attempts, lock, history, pr, shas)
   spec.md                       written by spec-writer, fed to every later agent
   briefs/<stage>.<n>.<agent>.md exactly what the agent saw (audit / debugging)
   results/<stage>.<n>.<agent>.json what the agent returned
-factory/state/tickets/<project>/  local tracker only
+.factory/tickets/            local tracker only
 ```
 
 ## Model + prompt tuning loop
 
 Because every brief and result is stored, you can measure the factory:
 - pass rate and attempts per stage → which agent prompt is weak
-- time and cost per stage → which model to downgrade/upgrade in `config.json → models`
+- time and cost per stage (`forgeline report`) → which model to downgrade/upgrade in `models`
 - review findings that recur → move the rule into `domain.md` or `checks.sh` (shift left)

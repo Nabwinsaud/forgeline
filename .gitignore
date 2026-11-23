@@ -1,5 +1,5 @@
-factory/config.json
-factory/state/
+.factory/state/
+.factory/worktrees/
 __pycache__/
 *.pyc
 .DS_Store

@@ -1,0 +1,15 @@
+{
+  "name": "forgeline",
+  "owner": { "name": "Nabwinsaud" },
+  "description": "Forgeline: an agentic software factory harness for Claude Code.",
+  "plugins": [
+    {
+      "name": "forgeline",
+      "source": "./",
+      "description": "Agentic software factory harness: ticket to shipped feature with factory agents, a deterministic gate, merge policy in code, guard hooks and pluggable trackers.",
+      "version": "0.2.0",
+      "category": "workflow",
+      "tags": ["software-factory", "agents", "harness", "code-review", "tdd", "automation"]
+    }
+  ]
+}
