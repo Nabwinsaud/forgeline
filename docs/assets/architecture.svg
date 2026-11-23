@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94A3B8"/></marker>
+  <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker>
+  <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker>
+  <filter id="s" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0F172A" flood-opacity="0.10"/></filter>
+</defs>
+<rect x="0.5" y="0.5" width="1279" height="759" rx="18" fill="#FFFFFF" stroke="#E2E8F0"/>
+<text x="40" y="52" font-size="24" font-weight="700" fill="#0F172A">Forgeline architecture</text>
+<text x="40" y="78" font-size="14" fill="#64748B">One reusable base harness · one small domain harness per app</text>
+<rect x="700" y="49" width="22" height="14" rx="4" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.5"/>
+<text x="730" y="60" font-size="12.5" fill="#0F172A">AI</text>
+<rect x="766.4" y="49" width="22" height="14" rx="4" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.5"/>
+<text x="796.4" y="60" font-size="12.5" fill="#0F172A">Deterministic</text>
+<rect x="912.0" y="49" width="22" height="14" rx="4" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.5"/>
+<text x="942.0" y="60" font-size="12.5" fill="#0F172A">External</text>
+<rect x="1021.6" y="49" width="22" height="14" rx="4" fill="#FFF6E0" stroke="#D97706" stroke-width="1.5"/>
+<text x="1051.6" y="60" font-size="12.5" fill="#0F172A">You</text>
+<rect x="24" y="104" width="220" height="440" rx="16" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.4"/>
+<text x="44" y="132" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">WORK SOURCES</text>
+<rect x="268" y="104" width="600" height="440" rx="16" fill="#F7F5FF" stroke="#DDD6FE" stroke-width="1.4"/>
+<text x="288" y="132" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#6D28D9">FORGELINE · BASE HARNESS</text>
+<rect x="892" y="104" width="364" height="440" rx="16" fill="#F2FAF5" stroke="#BBF7D0" stroke-width="1.4"/>
+<text x="912" y="132" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#15803D">YOUR APP REPO · DOMAIN HARNESS</text>
+<rect x="24" y="568" width="1232" height="150" rx="16" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.4"/>
+<text x="44" y="596" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">DELIVERY</text>
+<rect x="44.0" y="149.0" width="180" height="42" rx="10" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="44.0" y="159.0" width="4" height="22" rx="2" fill="#94A3B8"/>
+<text x="134" y="175" text-anchor="middle" font-size="13.5" font-weight="650" fill="#475569">GitHub Issues</text>
+<rect x="44.0" y="205.0" width="180" height="42" rx="10" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="44.0" y="215.0" width="4" height="22" rx="2" fill="#94A3B8"/>
+<text x="134" y="231" text-anchor="middle" font-size="13.5" font-weight="650" fill="#475569">Jira</text>
+<rect x="44.0" y="261.0" width="180" height="42" rx="10" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="44.0" y="271.0" width="4" height="22" rx="2" fill="#94A3B8"/>
+<text x="134" y="287" text-anchor="middle" font-size="13.5" font-weight="650" fill="#475569">Linear</text>
+<rect x="44.0" y="317.0" width="180" height="42" rx="10" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="44.0" y="327.0" width="4" height="22" rx="2" fill="#94A3B8"/>
+<text x="134" y="343" text-anchor="middle" font-size="13.5" font-weight="650" fill="#475569">Local tickets</text>
+<text x="134" y="420" text-anchor="middle" font-size="11.5" fill="#64748B">one adapter file each</text>
+<text x="134" y="438" text-anchor="middle" font-size="11.5" fill="#64748B">add your own in minutes</text>
+<polygon points="60.0,470.0 208.0,470.0 224.0,496 208.0,522.0 60.0,522.0 44.0,496" fill="#FFF6E0" stroke="#D97706" stroke-width="1.6" filter="url(#s)"/>
+<text x="134" y="493" text-anchor="middle" font-size="13.5" font-weight="650" fill="#7A3E00">You</text>
+<text x="134" y="510" text-anchor="middle" font-size="11" fill="#64748B">tickets · approvals</text>
+<rect x="300.0" y="152.0" width="240" height="66" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="300.0" y="162.0" width="4" height="46" rx="2" fill="#7C3AED"/>
+<text x="420" y="182" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Orchestrator</text>
+<text x="420" y="200" text-anchor="middle" font-size="11.5" fill="#64748B">Claude Code · /factory-run</text>
+<rect x="596.0" y="152.0" width="240" height="66" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="596.0" y="162.0" width="4" height="46" rx="2" fill="#7C3AED"/>
+<text x="716" y="182" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Subagents</text>
+<text x="716" y="200" text-anchor="middle" font-size="11.5" fill="#64748B">12 roles · model per role</text>
+<path d="M542,185 H592" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="546.3" y="164.5" width="41.400000000000006" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="567" y="175" text-anchor="middle" font-size="10.5" font-weight="500" fill="#64748B">spawn</text>
+<rect x="300.0" y="262.0" width="536" height="60" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="300.0" y="272.0" width="4" height="40" rx="2" fill="#0284C7"/>
+<text x="568" y="289" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Engine · bin/factory</text>
+<text x="568" y="307" text-anchor="middle" font-size="11.5" fill="#64748B">state machine · locks · retries · script stages · tracker sync</text>
+<path d="M420,220 V258" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M420,262 V224" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)" fill="none"/>
+<rect x="419.9" y="233.5" width="100.2" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="470" y="244" text-anchor="middle" font-size="10.5" font-weight="500" fill="#64748B">next / complete</text>
+<rect x="300.0" y="360.0" width="128" height="56" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="300.0" y="370.0" width="4" height="36" rx="2" fill="#0284C7"/>
+<text x="364" y="385" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">pipeline.json</text>
+<text x="364" y="403" text-anchor="middle" font-size="10.5" fill="#64748B">stages · transitions</text>
+<path d="M364,322 V360" stroke="#94A3B8" stroke-width="1.4" fill="none"/>
+<rect x="436.0" y="360.0" width="128" height="56" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="436.0" y="370.0" width="4" height="36" rx="2" fill="#0284C7"/>
+<text x="500" y="385" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">policy.py</text>
+<text x="500" y="403" text-anchor="middle" font-size="10.5" fill="#64748B">merge rules in code</text>
+<rect x="572.0" y="360.0" width="128" height="56" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="572.0" y="370.0" width="4" height="36" rx="2" fill="#0284C7"/>
+<text x="636" y="385" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Briefs</text>
+<text x="636" y="403" text-anchor="middle" font-size="10.5" fill="#64748B">role + domain + job</text>
+<rect x="708.0" y="360.0" width="128" height="56" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="708.0" y="370.0" width="4" height="36" rx="2" fill="#0284C7"/>
+<text x="772" y="385" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">State store</text>
+<text x="772" y="403" text-anchor="middle" font-size="10.5" fill="#64748B">jobs · results · cost</text>
+<path d="M772,322 V360" stroke="#94A3B8" stroke-width="1.4" fill="none"/>
+<path d="M500,322 V360 M636,322 V360" stroke="#94A3B8" stroke-width="1.4" fill="none"/>
+<rect x="300.0" y="462.0" width="536" height="52" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="300.0" y="472.0" width="4" height="32" rx="2" fill="#0284C7"/>
+<text x="568" y="485" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Adapters</text>
+<text x="568" y="503" text-anchor="middle" font-size="11.5" fill="#64748B">tracker · vcs · env — swap without touching the pipeline</text>
+<path d="M568,322 V460" stroke="#94A3B8" stroke-width="1.4" fill="none" marker-end="url(#a)"/>
+<rect x="924.0" y="152.0" width="300" height="66" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="924.0" y="162.0" width="4" height="46" rx="2" fill="#0284C7"/>
+<text x="1074" y="182" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Job worktrees</text>
+<text x="1074" y="200" text-anchor="middle" font-size="11.5" fill="#64748B">factory/&lt;job&gt; branch · isolated · parallel</text>
+<path d="M838,185 H920" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="831.84" y="164.5" width="94.32000000000001" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="879" y="175" text-anchor="middle" font-size="10.5" font-weight="500" fill="#64748B">code + commits</text>
+<rect x="924" y="250" width="300" height="150" rx="12" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.6" filter="url(#s)"/>
+<rect x="924" y="260" width="4" height="130" rx="2" fill="#16A34A"/>
+<text x="944" y="276" font-size="14" font-weight="700" fill="#14532D">.factory/</text>
+<text x="944" y="300" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#0F172A">domain.md</text>
+<text x="1046" y="300" font-size="11.5" fill="#64748B">business rules · invariants</text>
+<text x="944" y="320" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#0F172A">checks.sh</text>
+<text x="1046" y="320" font-size="11.5" fill="#64748B">deterministic gate</text>
+<text x="944" y="340" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#0F172A">config.json</text>
+<text x="1046" y="340" font-size="11.5" fill="#64748B">tracker · envs · policy</text>
+<text x="944" y="360" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#0F172A">reviewers/</text>
+<text x="1046" y="360" font-size="11.5" fill="#64748B">domain reviewers</text>
+<text x="944" y="380" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#0F172A">agents/</text>
+<text x="1046" y="380" font-size="11.5" fill="#64748B">per-role notes</text>
+<path d="M838,292 H920" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="837.72" y="275.5" width="82.56" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="879" y="286" text-anchor="middle" font-size="10.5" font-weight="500" fill="#64748B">reads · runs</text>
+<rect x="924.0" y="440.0" width="300" height="60" rx="12" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="924.0" y="450.0" width="4" height="40" rx="2" fill="#94A3B8"/>
+<text x="1074" y="467" text-anchor="middle" font-size="14" font-weight="650" fill="#475569">Application code</text>
+<text x="1074" y="485" text-anchor="middle" font-size="11.5" fill="#64748B">frontend · backend · tests</text>
+<path d="M300,488 H284 V254 H230" stroke="#94A3B8" stroke-width="1.8" fill="none" marker-end="url(#a)"/>
+<rect x="215.6" y="234" width="84.80000000000001" height="17" rx="4" fill="#FFFFFF"/>
+<text x="258" y="244" text-anchor="middle" font-size="10" font-weight="500" fill="#64748B">pull · status</text>
+<path d="M568,514 V600" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="464.98" y="549.5" width="206.04000000000002" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="568" y="560" text-anchor="middle" font-size="10.5" font-weight="500" fill="#64748B">push · PR · merge · deploy checks</text>
+<rect x="225.0" y="622.0" width="210" height="56" rx="12" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="225.0" y="632.0" width="4" height="36" rx="2" fill="#94A3B8"/>
+<text x="330" y="647" text-anchor="middle" font-size="14" font-weight="650" fill="#475569">Git host</text>
+<text x="330" y="665" text-anchor="middle" font-size="11.5" fill="#64748B">GitHub · local git</text>
+<rect x="463.0" y="622.0" width="210" height="56" rx="12" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="463.0" y="632.0" width="4" height="36" rx="2" fill="#94A3B8"/>
+<text x="568" y="647" text-anchor="middle" font-size="14" font-weight="650" fill="#475569">Pull requests</text>
+<text x="568" y="665" text-anchor="middle" font-size="11.5" fill="#64748B">review comments · LGTM</text>
+<rect x="701.0" y="622.0" width="210" height="56" rx="12" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" filter="url(#s)"/>
+<rect x="701.0" y="632.0" width="4" height="36" rx="2" fill="#94A3B8"/>
+<text x="806" y="647" text-anchor="middle" font-size="14" font-weight="650" fill="#475569">dev  →  stg</text>
+<text x="806" y="665" text-anchor="middle" font-size="11.5" fill="#64748B">QA agents validate here</text>
+<rect x="939.0" y="622.0" width="210" height="56" rx="12" fill="#F6F7F9" stroke="#94A3B8" stroke-width="1.6" stroke-dasharray="5 4" filter="url(#s)"/>
+<rect x="939.0" y="632.0" width="4" height="36" rx="2" fill="#94A3B8"/>
+<text x="1044" y="647" text-anchor="middle" font-size="14" font-weight="650" fill="#475569">production</text>
+<text x="1044" y="665" text-anchor="middle" font-size="11.5" fill="#64748B">never touched by agents</text>
+</svg>

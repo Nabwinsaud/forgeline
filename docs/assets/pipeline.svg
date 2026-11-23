@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94A3B8"/></marker>
+  <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker>
+  <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker>
+  <filter id="s" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0F172A" flood-opacity="0.10"/></filter>
+</defs>
+<rect x="0.5" y="0.5" width="1279" height="899" rx="18" fill="#FFFFFF" stroke="#E2E8F0"/>
+<text x="40" y="52" font-size="24" font-weight="700" fill="#0F172A">Forgeline pipeline</text>
+<text x="40" y="78" font-size="14" fill="#64748B">Agents judge · code decides · humans approve anything risky</text>
+<rect x="560" y="49" width="22" height="14" rx="4" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.5"/>
+<text x="590" y="60" font-size="12.5" fill="#0F172A">AI agent</text>
+<rect x="669.6" y="49" width="22" height="14" rx="4" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.5"/>
+<text x="699.6" y="60" font-size="12.5" fill="#0F172A">Deterministic code</text>
+<rect x="851.2" y="49" width="22" height="14" rx="4" fill="#FFF6E0" stroke="#D97706" stroke-width="1.5"/>
+<text x="881.2" y="60" font-size="12.5" fill="#0F172A">Human</text>
+<rect x="939.2" y="49" width="22" height="14" rx="4" fill="#EAF8EF" stroke="#16A34A" stroke-width="1.5"/>
+<text x="969.2" y="60" font-size="12.5" fill="#0F172A">Start / end</text>
+<path d="M1070.4,56 h22" stroke="#DC2626" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="1100.4" y="60" font-size="12.5" fill="#0F172A">Feedback loop</text>
+<rect x="24" y="100" width="1232" height="150" rx="14" fill="#FBFCFE" stroke="#EEF2F6"/>
+<text x="46" y="140" font-size="26" font-weight="800" fill="#CBD5E1">01</text>
+<text x="46" y="162" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">PLAN</text>
+<rect x="24" y="266" width="1232" height="150" rx="14" fill="#FBFCFE" stroke="#EEF2F6"/>
+<text x="46" y="306" font-size="26" font-weight="800" fill="#CBD5E1">02</text>
+<text x="46" y="328" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">BUILD &amp;</text>
+<text x="46" y="344" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">VERIFY</text>
+<rect x="24" y="432" width="1232" height="232" rx="14" fill="#FBFCFE" stroke="#EEF2F6"/>
+<text x="46" y="472" font-size="26" font-weight="800" fill="#CBD5E1">03</text>
+<text x="46" y="494" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">REVIEW &amp;</text>
+<text x="46" y="510" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">MERGE</text>
+<rect x="24" y="680" width="1232" height="150" rx="14" fill="#FBFCFE" stroke="#EEF2F6"/>
+<text x="46" y="720" font-size="26" font-weight="800" fill="#CBD5E1">04</text>
+<text x="46" y="742" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">RELEASE</text>
+<text x="46" y="758" font-size="11.5" font-weight="700" letter-spacing="1.2" fill="#64748B">&amp; QA</text>
+<rect x="217.0" y="144.0" width="190" height="62" rx="12" fill="#EAF8EF" stroke="#16A34A" stroke-width="1.6" filter="url(#s)"/>
+<rect x="217.0" y="154.0" width="4" height="42" rx="2" fill="#16A34A"/>
+<text x="312" y="172" text-anchor="middle" font-size="14" font-weight="650" fill="#14532D">Ticket</text>
+<text x="312" y="190" text-anchor="middle" font-size="11.5" fill="#64748B">GitHub · Jira · Linear · local</text>
+<rect x="482.0" y="144.0" width="190" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="482.0" y="154.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="577" y="172" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Intake</text>
+<text x="577" y="190" text-anchor="middle" font-size="11.5" fill="#64748B">build · reject · ask human</text>
+<rect x="747.0" y="144.0" width="190" height="62" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="747.0" y="154.0" width="4" height="42" rx="2" fill="#0284C7"/>
+<text x="842" y="172" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Workspace</text>
+<text x="842" y="190" text-anchor="middle" font-size="11.5" fill="#64748B">git worktree + branch per job</text>
+<rect x="1012.0" y="144.0" width="190" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="1012.0" y="154.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="1107" y="172" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Spec writer</text>
+<text x="1107" y="190" text-anchor="middle" font-size="11.5" fill="#64748B">acceptance criteria = contract</text>
+<path d="M409.0,175 H478.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M674.0,175 H743.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M939.0,175 H1008.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="668.22" y="152.5" width="82.56" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="709.5" y="163" text-anchor="middle" font-size="10.5" font-weight="500" fill="#64748B">risk · areas</text>
+<path d="M1107,208.0 V306.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="1012.0" y="310.0" width="190" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="1012.0" y="320.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="1107" y="338" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Builders</text>
+<text x="1107" y="356" text-anchor="middle" font-size="11.5" fill="#64748B">backend ∥ frontend · test-first</text>
+<rect x="747.0" y="310.0" width="190" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="747.0" y="320.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="842" y="338" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Test engineers</text>
+<text x="842" y="356" text-anchor="middle" font-size="11.5" fill="#64748B">unit · integration · e2e</text>
+<rect x="482.0" y="310.0" width="190" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="482.0" y="320.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="577" y="338" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Security engineer</text>
+<text x="577" y="356" text-anchor="middle" font-size="11.5" fill="#64748B">diff · deps · secrets scan</text>
+<rect x="217.0" y="310.0" width="190" height="62" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="217.0" y="320.0" width="4" height="42" rx="2" fill="#0284C7"/>
+<text x="312" y="338" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Gate · checks.sh</text>
+<text x="312" y="356" text-anchor="middle" font-size="11.5" fill="#64748B">build · lint · test · codegen</text>
+<path d="M1010.0,341 H941.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M745.0,341 H676.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M480.0,341 H411.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="206.04" y="290.5" width="211.92000000000002" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="312" y="301.0" text-anchor="middle" font-size="10.5" font-weight="500" fill="#0284C7">no AI · must pass on merged commit</text>
+<path d="M352,400 H1107 V376.0" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#r)"/>
+<path d="M577,372.0 V400" stroke="#DC2626" stroke-width="1.6" stroke-dasharray="5 4" fill="none"/>
+<path d="M842,372.0 V400" stroke="#DC2626" stroke-width="1.6" stroke-dasharray="5 4" fill="none"/>
+<path d="M352,372.0 V400" stroke="#DC2626" stroke-width="1.6" stroke-dasharray="5 4" fill="none"/>
+<rect x="497.14" y="393" width="424.72" height="18" rx="4" fill="#FFFFFF"/>
+<text x="709.5" y="404" text-anchor="middle" font-size="11" font-weight="600" fill="#DC2626">fail → retry Build with exact feedback (max attempts, then blocked)</text>
+<path d="M312,374.0 V497.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="217.0" y="501.0" width="190" height="62" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="217.0" y="511.0" width="4" height="42" rx="2" fill="#0284C7"/>
+<text x="312" y="529" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Pull request</text>
+<text x="312" y="547" text-anchor="middle" font-size="11.5" fill="#64748B">push · open or update</text>
+<rect x="477.0" y="434.0" width="200" height="196" rx="14" fill="#FFFFFF" stroke="#C4B5FD" stroke-dasharray="5 4"/>
+<text x="577" y="452.0" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="1" fill="#7C3AED">REVIEWERS · PARALLEL</text>
+<rect x="492.0" y="470.0" width="170" height="32" rx="8" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="492.0" y="480.0" width="4" height="12" rx="2" fill="#7C3AED"/>
+<text x="577" y="491.0" text-anchor="middle" font-size="11.5" font-weight="650" fill="#3B1D8F">Code  ·  correctness · tests</text>
+<rect x="492.0" y="510.0" width="170" height="32" rx="8" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="492.0" y="520.0" width="4" height="12" rx="2" fill="#7C3AED"/>
+<text x="577" y="531.0" text-anchor="middle" font-size="11.5" font-weight="650" fill="#3B1D8F">Security  ·  authz · injection</text>
+<rect x="492.0" y="550.0" width="170" height="32" rx="8" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="492.0" y="560.0" width="4" height="12" rx="2" fill="#7C3AED"/>
+<text x="577" y="571.0" text-anchor="middle" font-size="11.5" font-weight="650" fill="#3B1D8F">UX  ·  states · a11y</text>
+<rect x="492.0" y="590.0" width="170" height="32" rx="8" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="492.0" y="600.0" width="4" height="12" rx="2" fill="#7C3AED"/>
+<text x="577" y="611.0" text-anchor="middle" font-size="11.5" font-weight="650" fill="#3B1D8F">Domain  ·  your rules</text>
+<path d="M409.0,532 H473.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="747.0" y="501.0" width="190" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="747.0" y="511.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="842" y="529" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">Approver</text>
+<text x="842" y="547" text-anchor="middle" font-size="11.5" fill="#64748B">LGTM · re-checks risk</text>
+<path d="M679.0,532 H743.0" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<polygon points="1107,486.0 1197.0,532 1107,578.0 1017.0,532" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<text x="1107" y="530" text-anchor="middle" font-size="13.5" font-weight="650" fill="#0B4A6F">Merge policy</text>
+<text x="1107" y="547" text-anchor="middle" font-size="11" fill="#64748B">code, not AI</text>
+<path d="M939.0,532 H1013" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="962.74" y="511.5" width="35.52" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="980.5" y="522" text-anchor="middle" font-size="10.5" font-weight="600" fill="#16A34A">LGTM</text>
+<path d="M607,434.0 V414" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#r)"/>
+<path d="M842,501.0 V414" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#r)"/>
+<rect x="790.02" y="472.5" width="111.96000000000001" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="846" y="483.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="#DC2626">changes requested</text>
+<polygon points="1008.0,609.0 1166.0,609.0 1182.0,634 1166.0,659.0 1008.0,659.0 992.0,634" fill="#FFF6E0" stroke="#D97706" stroke-width="1.6" filter="url(#s)"/>
+<text x="1087" y="631" text-anchor="middle" font-size="13.5" font-weight="650" fill="#7A3E00">Human</text>
+<text x="1087" y="648" text-anchor="middle" font-size="11" fill="#64748B">approve · reject · retry</text>
+<path d="M1087,580 V605" fill="none" stroke="#D97706" stroke-width="1.8" marker-end="url(#o)"/>
+<text x="1077" y="598" text-anchor="end" font-size="10.5" font-weight="500" fill="#B45309">risk &gt; low · protected path</text>
+<path d="M1199,532 H1236 V755 H1181" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M1182,634 H1236" stroke="#D97706" stroke-width="1.8" fill="none"/>
+<rect x="1165.2" y="511.5" width="70.80000000000001" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="1230" y="522" text-anchor="end" font-size="10.5" font-weight="600" fill="#16A34A">auto-merge</text>
+<rect x="1192.42" y="617.5" width="53.160000000000004" height="17.5" rx="4" fill="#FFFFFF"/>
+<text x="1219" y="628" text-anchor="middle" font-size="10.5" font-weight="600" fill="#B45309">approve</text>
+<rect x="1037.0" y="724.0" width="140" height="62" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="1037.0" y="734.0" width="4" height="42" rx="2" fill="#0284C7"/>
+<text x="1107" y="752" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Deploy · dev</text>
+<text x="1107" y="770" text-anchor="middle" font-size="11.5" fill="#64748B">wait for merged sha</text>
+<rect x="878.0" y="724.0" width="140" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="878.0" y="734.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="948" y="752" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">QA · dev</text>
+<text x="948" y="770" text-anchor="middle" font-size="11.5" fill="#64748B">verify every criterion</text>
+<rect x="719.0" y="724.0" width="140" height="62" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="719.0" y="734.0" width="4" height="42" rx="2" fill="#0284C7"/>
+<text x="789" y="752" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Deploy · stg</text>
+<text x="789" y="770" text-anchor="middle" font-size="11.5" fill="#64748B">wait for merged sha</text>
+<rect x="560.0" y="724.0" width="140" height="62" rx="12" fill="#F4EFFF" stroke="#7C3AED" stroke-width="1.6" filter="url(#s)"/>
+<rect x="560.0" y="734.0" width="4" height="42" rx="2" fill="#7C3AED"/>
+<text x="630" y="752" text-anchor="middle" font-size="14" font-weight="650" fill="#3B1D8F">QA · stg</text>
+<text x="630" y="770" text-anchor="middle" font-size="11.5" fill="#64748B">verify + explore</text>
+<rect x="401.0" y="724.0" width="140" height="62" rx="12" fill="#E9F5FE" stroke="#0284C7" stroke-width="1.6" filter="url(#s)"/>
+<rect x="401.0" y="734.0" width="4" height="42" rx="2" fill="#0284C7"/>
+<text x="471" y="752" text-anchor="middle" font-size="14" font-weight="650" fill="#0B4A6F">Close ticket</text>
+<text x="471" y="770" text-anchor="middle" font-size="11.5" fill="#64748B">status → done</text>
+<rect x="242.0" y="724.0" width="140" height="62" rx="12" fill="#EAF8EF" stroke="#16A34A" stroke-width="1.6" filter="url(#s)"/>
+<rect x="242.0" y="734.0" width="4" height="42" rx="2" fill="#16A34A"/>
+<text x="312" y="752" text-anchor="middle" font-size="14" font-weight="650" fill="#14532D">Shipped</text>
+<text x="312" y="770" text-anchor="middle" font-size="11.5" fill="#64748B">time · cost logged</text>
+<path d="M1035,755 H1022" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M876,755 H863" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M717,755 H704" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M558,755 H545" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M399,755 H386" fill="none" stroke="#94A3B8" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="654.56" y="799.0" width="430.88000000000005" height="18" rx="4" fill="#FFFFFF"/>
+<text x="870" y="810.0" text-anchor="middle" font-size="11" font-weight="500" fill="#64748B">QA failure → blocked + ticket comment · production is never a target</text>
+<text x="40" y="874" font-size="12" fill="#64748B">Every stage result, brief, attempt, duration and cost is stored per job, so a stopped run resumes exactly where it left off.</text>
+</svg>

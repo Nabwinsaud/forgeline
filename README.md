@@ -15,20 +15,17 @@ Every agent gets one composed **brief** = role + domain rules + agent notes + ti
 output contract. The brief is plain markdown, so any runner can use it (Claude subagent, `claude -p`,
 Agent SDK, `codex exec`).
 
+## Architecture
+
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="Forgeline architecture: work sources, base harness (orchestrator, subagents, engine, policy, adapters), app repo domain harness, delivery" width="100%">
+</p>
+
 ## Pipeline
 
-```
-ticket ──► intake ──► workspace ──► spec ──► build ──► test ──► security ──► GATE ──► PR
-            (triage,    (git        (AC =     (backend   (unit +   (scan diff)   checks.sh    │
-             risk)      worktree)   contract)  frontend)  e2e)                 no LLM       ▼
-                                                 ▲                                    review (parallel)
-                                                 └──────── fail / changes requested ── code · security · ux · domain
-                                                                                              │
-close ◄── qa_stg ◄── deploy_stg ◄── qa_dev ◄── deploy_dev ◄── MERGE ◄── approve (LGTM)  ◄─────┘
-(ticket                                                       policy code:
- → done)                                                      risk ≤ limit, gate on head,
-                                                              all reviews pass, no protected paths
-```
+<p align="center">
+  <img src="docs/assets/pipeline.svg" alt="Forgeline pipeline: plan, build and verify, review and merge, release and QA, with feedback loops back to build" width="100%">
+</p>
 
 - **Agents judge, code decides.** Agents return `pass | fail | changes_requested | needs_human | reject | skip`.
   `factory/pipeline.json` maps each outcome to the next stage. Agents never merge, push to base, or touch tickets.
