@@ -12,8 +12,8 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python: ["3.10", "3.12"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
       - run: git config --global user.email ci@example.com && git config --global user.name ci
@@ -26,11 +26,11 @@ jobs:
       run:
         working-directory: packages/create-forgeline
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: bun install --frozen-lockfile

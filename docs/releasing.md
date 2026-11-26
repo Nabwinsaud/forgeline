@@ -31,5 +31,10 @@ versions). Workflow: `.github/workflows/release.yml`.
 ## One-time setup
 
 - Repo → Settings → Actions → General → turn on **Allow GitHub Actions to create and approve pull requests**.
-- Add an npm automation token as the repo secret **`NPM_TOKEN`** (npmjs.com → Access Tokens).
+- npm publishing uses **trusted publishing**, so there's no npm token in the repo. On npmjs.com →
+  `create-forgeline` → Settings → Trusted Publisher: GitHub Actions, user `Nabwinsaud`, repo
+  `forgeline`, workflow `release.yml`. (The very first version, 0.1.0, went out with a token, because
+  trusted publishing can only be set up once the package exists.)
+- `main` is protected: PRs only, squash merge, all CI checks green. Release PRs are opened with the
+  built-in token, which doesn't trigger CI, so merge those with `gh pr merge <n> --squash --admin`.
 - The baseline tag `v0.2.0` exists, so release-please counts from there.
