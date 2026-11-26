@@ -5,9 +5,9 @@
 <h1 align="center">Forgeline</h1>
 
 <p align="center">
-  <strong>An agentic software factory that takes work from ticket to shipped feature.</strong><br>
-  A Claude Code plugin harness: factory agents, a deterministic gate, merge policy in code,<br>
-  guard hooks, rule packs and pluggable trackers, for any repo and any business.
+  <strong>Ticket in, reviewed PR out.</strong><br>
+  A Claude Code harness where agents do the work and guardrails they can't edit decide what ships.<br>
+  Factory agents, a deterministic gate, merge policy in code, guard hooks and pluggable trackers.
 </p>
 
 ---
