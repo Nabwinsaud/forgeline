@@ -11,6 +11,10 @@
 - Adapters: tracker local/github/jira/linear, vcs local/github, env none/url_poll/command
 
 ## Next
+
+The to-do list for the next release is in
+[next-iteration.md](next-iteration.md).
+
 1. Battle-test the GitHub, Jira and Linear adapters against real projects.
 2. GitHub Action template: run the factory on a schedule or on `factory:ready` labels.
 3. Webhooks instead of polling (PR checks, review comments, deploy events).
