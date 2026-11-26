@@ -1,0 +1,55 @@
+{
+  "name": "create-forgeline",
+  "version": "0.0.0",
+  "description": "Set up Forgeline, the agentic software factory for Claude Code, in any repo with one command.",
+  "keywords": [
+    "forgeline",
+    "claude-code",
+    "agents",
+    "software-factory",
+    "cli",
+    "create"
+  ],
+  "homepage": "https://github.com/Nabwinsaud/forgeline/tree/main/packages/create-forgeline",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nabwinsaud/forgeline.git",
+    "directory": "packages/create-forgeline"
+  },
+  "bugs": "https://github.com/Nabwinsaud/forgeline/issues",
+  "license": "MIT",
+  "author": "Nabwinsaud",
+  "type": "module",
+  "bin": {
+    "create-forgeline": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "engine",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "1.9.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.7",
+    "@types/bun": "1.4.4",
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

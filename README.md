@@ -23,6 +23,15 @@ In Claude Code:
 
 or in one step (Claude Code 2.1.275+): `/plugin install forgeline --marketplace Nabwinsaud/forgeline`
 
+Or set everything up from a terminal in one step, inside **your app repo**:
+
+```sh
+npm create forgeline      # or: bunx create-forgeline
+```
+
+It checks your repo, writes `.factory/` with safe defaults, runs your gate once and installs the
+plugin. See [packages/create-forgeline](packages/create-forgeline).
+
 Then, inside **your app repo**:
 
 ```text

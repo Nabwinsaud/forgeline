@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "separate-pull-requests": true,
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "component": "forgeline",
+      "include-component-in-tag": false,
+      "exclude-paths": ["packages"],
+      "extra-files": [
+        "forgeline/__init__.py",
+        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" },
+        { "type": "json", "path": ".claude-plugin/marketplace.json", "jsonpath": "$.plugins[0].version" }
+      ]
+    },
+    "packages/create-forgeline": {
+      "release-type": "node",
+      "component": "create-forgeline"
+    }
+  }
+}
