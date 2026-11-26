@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/Nabwinsaud/forgeline/compare/create-forgeline-v0.1.0...create-forgeline-v0.1.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **create-forgeline:** detect git push using a different GitHub account than gh ([#8](https://github.com/Nabwinsaud/forgeline/issues/8)) ([9bc7018](https://github.com/Nabwinsaud/forgeline/commit/9bc7018740769fbf75effb4c3f1d6a16aff4c90d))
+
 ## 0.1.0 (2026-11-26)
 
 
