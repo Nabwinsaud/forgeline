@@ -15,7 +15,7 @@ jobs:
       cli_released: ${{ steps.release.outputs['packages/create-forgeline--release_created'] }}
     steps:
       - id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
@@ -28,17 +28,16 @@ jobs:
       run:
         working-directory: packages/create-forgeline
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org
+          node-version: 24   # npm 11+: needed for trusted publishing
       - run: bun install --frozen-lockfile
       - run: bun run typecheck && bun run lint && bun test
       - run: bun run build
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Trusted publishing: npm checks this workflow's GitHub identity (id-token: write above).
+      # No token stored anywhere. Configured on npmjs.com -> create-forgeline -> Settings.
+      - run: npm publish --access public
