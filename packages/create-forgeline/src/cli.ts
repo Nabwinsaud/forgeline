@@ -7,6 +7,7 @@ import pkg from "../package.json" with { type: "json" };
 import {
   type Answers,
   enginePath,
+  gitPushAuthOk,
   normalizeSiteUrl,
   patchConfig,
   preflight,
@@ -14,6 +15,7 @@ import {
   readJson,
   run,
   type Tracker,
+  useGhCredentials,
   writeJson,
 } from "./lib.ts";
 
@@ -90,6 +92,23 @@ async function main(): Promise<void> {
       await p.confirm({ message: "You have uncommitted changes. Continue anyway?", initialValue: false }),
     );
     if (!go) bail("Commit or stash your changes, then run again.");
+  }
+
+  // Several GitHub accounts on one machine: gh can be logged in as the right one while git's saved
+  // credentials belong to another, and the factory's pushes then fail with "Repository not found".
+  if (pf.githubRepo && pf.ghAuthed && !gitPushAuthOk(pf.root)) {
+    p.log.warn("git can't push to origin with its saved login, but gh can (different GitHub account?).");
+    const fix =
+      yes ||
+      answer(await p.confirm({ message: "Make git use gh's login for this repo only?", initialValue: true }));
+    if (fix) {
+      useGhCredentials(pf.root);
+      p.log.success(
+        gitPushAuthOk(pf.root)
+          ? "Fixed: git now uses gh's login here."
+          : "Set, but push still fails. Check `gh auth status`.",
+      );
+    }
   }
 
   // 2. Ask where tickets come from.

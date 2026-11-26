@@ -5,6 +5,7 @@ import { join } from "node:path";
 import {
   enginePath,
   githubSlug,
+  looksLikeWrongAccount,
   normalizeSiteUrl,
   parsePythonVersion,
   patchConfig,
@@ -12,6 +13,7 @@ import {
   pythonOk,
   readJson,
   run,
+  useGhCredentials,
 } from "../src/lib.ts";
 
 describe("parsing", () => {
@@ -93,5 +95,31 @@ describe("engine", () => {
     expect(out.components[0]).toMatchObject({ lang: "go", area: "backend" });
     expect(readJson(join(dir, ".factory", "config.json")).policy).toBeDefined();
     expect(preflight(dir).hasFactory).toBe(true);
+  });
+});
+
+describe("git account check", () => {
+  test("recognises wrong-account push errors", () => {
+    expect(looksLikeWrongAccount("remote: Repository not found.\nfatal: repository 'x' not found")).toBe(
+      true,
+    );
+    expect(looksLikeWrongAccount("remote: Permission to o/r.git denied to someone.")).toBe(true);
+    expect(looksLikeWrongAccount("fatal: could not read Username for 'https://github.com'")).toBe(true);
+    expect(looksLikeWrongAccount("! [rejected] main -> main (non-fast-forward)")).toBe(false);
+  });
+
+  test("points git at gh for github.com in this repo only", () => {
+    const dir = mkdtempSync(join(tmpdir(), "cf-cred-"));
+    run("git", ["init", "-q"], dir);
+    useGhCredentials(dir);
+    useGhCredentials(dir); // running twice must not stack helpers
+    const helpers = run(
+      "git",
+      ["config", "--local", "--get-all", "credential.https://github.com.helper"],
+      dir,
+    )
+      .stdout.trimEnd()
+      .split("\n");
+    expect(helpers).toEqual(["", "!gh auth git-credential"]);
   });
 });

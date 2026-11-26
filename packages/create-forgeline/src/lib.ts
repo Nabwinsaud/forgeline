@@ -13,8 +13,19 @@ export interface RunResult {
   stderr: string;
 }
 
-export function run(cmd: string, args: string[], cwd?: string, env?: Record<string, string>): RunResult {
-  const p = spawnSync(cmd, args, { cwd, encoding: "utf8", env: { ...process.env, ...env } });
+export function run(
+  cmd: string,
+  args: string[],
+  cwd?: string,
+  env?: Record<string, string>,
+  timeoutMs?: number,
+): RunResult {
+  const p = spawnSync(cmd, args, {
+    cwd,
+    encoding: "utf8",
+    env: { ...process.env, ...env },
+    timeout: timeoutMs,
+  });
   if (p.error) return { ok: false, code: -1, stdout: "", stderr: String(p.error.message) };
   return { ok: p.status === 0, code: p.status ?? -1, stdout: p.stdout ?? "", stderr: p.stderr ?? "" };
 }
@@ -140,4 +151,36 @@ export function writeJson(path: string, data: Json): void {
 export function normalizeSiteUrl(input: string): string {
   const s = input.trim().replace(/\/+$/, "");
   return /^https?:\/\//.test(s) ? s : `https://${s}`;
+}
+
+/** True when a failed push looks like "git is logged in as someone without access to this repo". */
+export function looksLikeWrongAccount(stderr: string): boolean {
+  return /repository not found|permission to .* denied|403|authentication failed|could not read username/i.test(
+    stderr,
+  );
+}
+
+/**
+ * Can plain `git push` reach origin? A dry run still authenticates, so it catches the case where gh is
+ * logged in as one GitHub account but git's saved credentials belong to another.
+ */
+export function gitPushAuthOk(root: string): boolean {
+  const res = run(
+    "git",
+    ["push", "--dry-run", "--porcelain", "origin", "HEAD"],
+    root,
+    { GIT_TERMINAL_PROMPT: "0" },
+    20_000,
+  );
+  return res.ok || !looksLikeWrongAccount(res.stderr);
+}
+
+/** Make git use gh's login for github.com, in this repo only. */
+export function useGhCredentials(root: string): void {
+  run("git", ["config", "--local", "--replace-all", "credential.https://github.com.helper", ""], root);
+  run(
+    "git",
+    ["config", "--local", "--add", "credential.https://github.com.helper", "!gh auth git-credential"],
+    root,
+  );
 }
