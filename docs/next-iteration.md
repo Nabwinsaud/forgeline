@@ -1,6 +1,6 @@
 # Next release: plan
 
-What to work on next, most important first.
+What to work on next, most important first. Tracked as [milestones](https://github.com/Nabwinsaud/forgeline/milestones) with one issue per item.
 
 ## 1. Rebase on latest main before merging
 - [ ] `workspace`: fetch and branch from `origin/<base>`, not the local base branch
