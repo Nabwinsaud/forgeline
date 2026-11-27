@@ -1,0 +1,2 @@
+{ "name": "auth", "description": "Logins, sessions, roles, tenants: every request checks who and what",
+  "reviewer": { "name": "access-control", "model": "sonnet" } }

@@ -19,6 +19,9 @@ disable-model-invocation: true
    - Test accounts / test data QA may use on dev and stg (names of env vars, never secrets).
    Read the codebase to propose answers first; let the user correct them. Replace the
    template text in `domain.md` with the real content.
+   Then suggest domain packs that fit what you saw (`forgeline pack list`): `money` if it handles
+   prices or payments, `auth` if it has logins or roles, `api` for a public API, `web-app` for a UI.
+   Add the ones the user agrees to with `forgeline pack add <name>`.
 4. Open `.factory/checks.sh` and make sure every command exists in this repo (scripts in
    package.json, sqlc config, etc.). Run it once on the current branch: `bash .factory/checks.sh`.
    Fix the script (not the app) until it reflects how this repo is really verified.

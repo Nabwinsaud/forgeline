@@ -1,0 +1,2 @@
+{ "name": "money", "description": "Payments, balances, prices, invoices: exact amounts, no lost or double charges",
+  "reviewer": { "name": "money-rules", "model": "sonnet" } }

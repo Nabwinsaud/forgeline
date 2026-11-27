@@ -52,6 +52,7 @@ Requirements: Claude Code, git, Python 3.10+ (macOS/Linux ship it). Optional: `g
 | **22 skills** | 9 commands (`/forgeline:do`, `run`, `learn`, `init`, `status`, `approve`, `ticket`, `doctor`, `report`) and 13 engineering skills (TDD, verification, specs, review, security, API design, migrations, Go, React, Python, Playwright, QA, git) | |
 | **Engine** | `forgeline` CLI on your PATH: a deterministic state machine with locks, retries, worktrees, a headless runner, metrics | agents judge, code decides |
 | **Guard hooks** | block force-push, agents pushing to main or merging, agents editing the gate/policy, edits to generated code, secrets in code; profiles `minimal` · `standard` · `strict` | active only in repos with `.factory/` |
+| **Domain packs** | `forgeline pack add money` (or `auth`, `api`, `web-app`, a folder, a git URL): business rules, a reviewer for them, and a gate check, in one command | |
 | **Rule packs** | always-on standards for common, Go, TypeScript/React, Python, installed into your repo by `init` | |
 | **Adapters** | trackers: local · GitHub · Jira · Linear; git: local · GitHub; environments: none · URL poll · any command | add one in a single file |
 

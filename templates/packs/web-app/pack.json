@@ -1,0 +1,2 @@
+{ "name": "web-app", "description": "User-facing web UI: every state handled, accessible, no XSS",
+  "reviewer": { "name": "web-app-rules", "model": "sonnet" } }

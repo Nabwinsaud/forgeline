@@ -1,0 +1,2 @@
+{ "name": "api", "description": "Public or shared HTTP APIs: don't break clients, validate input, consistent errors",
+  "reviewer": { "name": "api-contract", "model": "sonnet" } }
