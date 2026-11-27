@@ -30,6 +30,7 @@ Usage
 Options
   -y, --yes             accept defaults, no questions (local tracker, auto-merge off)
   --tracker <type>      local | github | jira | linear
+  --packs <list>        domain packs: money,auth,api,web-app (rules, a reviewer, gate checks)
   --no-plugin           don't install the Claude Code plugin
   --skip-gate           don't run .factory/checks.sh at the end
   -v, --version         print version
@@ -51,6 +52,7 @@ async function main(): Promise<void> {
     options: {
       yes: { type: "boolean", short: "y" },
       tracker: { type: "string" },
+      packs: { type: "string" },
       plugin: { type: "boolean", default: true },
       "no-plugin": { type: "boolean" },
       "skip-gate": { type: "boolean" },
@@ -150,12 +152,42 @@ async function main(): Promise<void> {
     answers.linearTeam = answer(await p.text({ message: "Linear team key", placeholder: "APP" }));
   }
 
+  // Domain packs: ready-made rules for the kind of product this is.
+  const PACKS = ["money", "auth", "api", "web-app"];
+  let packs = (o.packs ?? "")
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const unknown = packs.filter((x) => !PACKS.includes(x));
+  if (unknown.length) bail(`Unknown pack: ${unknown.join(", ")}. Choose from ${PACKS.join(", ")}.`);
+  if (!yes && !o.packs) {
+    packs = answer(
+      await p.multiselect({
+        message: "What does this product handle? (adds business rules, a reviewer and gate checks)",
+        required: false,
+        options: [
+          { value: "money", label: "Money", hint: "prices, payments, balances" },
+          { value: "auth", label: "Logins and roles", hint: "users, permissions, tenants" },
+          { value: "api", label: "A public API", hint: "other apps call it" },
+          { value: "web-app", label: "A web UI", hint: "screens people use" },
+        ],
+      }),
+    );
+  }
+
   // 3. Scaffold with the engine, then apply the answers.
   s.start("Writing .factory/ and rule packs");
   const engine = enginePath();
   const init = run(
     "python3",
-    [join(engine, "bin", "forgeline"), "init", "--json", "--tracker", tracker],
+    [
+      join(engine, "bin", "forgeline"),
+      "init",
+      "--json",
+      "--tracker",
+      tracker,
+      ...(packs.length ? ["--packs", packs.join(",")] : []),
+    ],
     pf.root,
   );
   if (!init.ok) {
@@ -169,8 +201,10 @@ async function main(): Promise<void> {
   p.log.info(
     result.components.length
       ? `Detected: ${result.components.map((c) => `${c.lang} in ${c.dir} (${c.area})`).join(", ")}`
-      : "No stack detected. Add your build and test commands to .factory/checks.sh.",
+      : "No code yet, so the gate passes for now. After the first ticket adds code, run `forgeline init --checks-only`.",
   );
+  if (packs.length)
+    p.log.info(`Domain packs: ${packs.join(", ")}. Review them in .factory/domain.md and checks.sh.`);
 
   if (tracker === "github" && github) {
     run(
@@ -233,7 +267,7 @@ async function main(): Promise<void> {
   next.push(
     `${next.length + 1}. Commit: git add .factory .claude && git commit -m "chore: add Forgeline"`,
     tracker === "local"
-      ? `${next.length + 2}. forgeline ticket add "Add a /health endpoint", then /forgeline:run in Claude Code`
+      ? `${next.length + 2}. In Claude Code: /forgeline:do add a /health endpoint  (watch it: forgeline watch)`
       : `${next.length + 2}. Label a small ticket for the factory, then /forgeline:run in Claude Code`,
   );
   p.note(next.join("\n"), "Next");

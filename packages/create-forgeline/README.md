@@ -29,6 +29,7 @@ Run it from the root of the app you want the factory to work on.
 |---|---|
 | `-y`, `--yes` | no questions: local tracker, auto-merge off |
 | `--tracker <type>` | `local` · `github` · `jira` · `linear` |
+| `--packs <list>` | domain packs to add: `money`, `auth`, `api`, `web-app` (comma separated) |
 | `--no-plugin` | skip the Claude Code plugin install |
 | `--skip-gate` | don't run `checks.sh` at the end |
 
