@@ -28,7 +28,20 @@ def get(tracker_cfg: dict, project_name: str):
 
 def get_for(job: dict):
     proj = config.project(job["project"])
-    return get(config.domain_config(proj)["tracker"], job["project"])
+    cfg = config.domain_config(proj)["tracker"]
+    if job["ticket"].get("tracker") == "local" and cfg.get("type", "local") != "local":
+        cfg = {"type": "local"}  # a `forgeline do` job lives in the local tracker, whatever the repo uses
+    return get(cfg, job["project"])
+
+
+def do(title: str, body: str = "") -> dict:
+    """Start a job from one sentence: a local ticket, enqueued now. No tracker setup needed."""
+    from .adapters.tracker_local import LocalTracker
+    proj = config.project()
+    t = LocalTracker({}, proj["name"]).add(title, body, status="in_progress")
+    ticket = {"tracker": "local", "key": t["key"], "title": t["title"], "body": t["body"],
+              "url": str(config.domain_dir() / "tickets" / f"{t['key']}.json")}
+    return state.create(proj["name"], ticket, config.pipeline()["start"])
 
 
 def pull(project_name: str | None = None) -> list[dict]:

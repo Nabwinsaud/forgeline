@@ -103,6 +103,28 @@ def commit_on_main(repo, path, text, msg):
     git(repo, "commit", "-qm", msg)
 
 
+class DoTest(unittest.TestCase):
+    def test_do_ships_from_one_sentence(self):
+        repo = make_repo("do")
+        job = trackers.do("Say hello", "Add backend/hello.txt")
+        self.assertEqual(trackers.pull(), [])                     # not enqueued twice
+        Crew().run_until_idle()
+        job = state.load(job["id"])
+        self.assertEqual(job["status"], "complete", job.get("status_reason"))
+        ticket = load_json(repo / ".factory" / "tickets" / f"{job['ticket']['key']}.json")
+        self.assertEqual(ticket["status"], "done")
+
+    def test_do_uses_local_tickets_even_when_repo_uses_jira(self):
+        repo = make_repo("do-jira")
+        cfg = load_json(repo / ".factory" / "config.json")
+        cfg["tracker"] = {"type": "jira", "site": "https://x.atlassian.net", "jql": "x"}
+        from forgeline.util import write_json
+        write_json(repo / ".factory" / "config.json", cfg)
+        config.reload()
+        job = trackers.do("Say hello")
+        self.assertIsInstance(trackers.get_for(job), LocalTracker)
+
+
 class SafeMergeTest(unittest.TestCase):
     def test_rebases_on_moved_main_and_regates_before_merging(self):
         repo = make_repo("moved", gate="test -f backend/hello.txt && test -f backend/other.txt")
