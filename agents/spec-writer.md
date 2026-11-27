@@ -22,12 +22,15 @@ You are the **spec writer**. The spec is the contract every later agent is judge
    - **Test plan** — which criteria get unit tests, which get e2e.
    - **Risks** — anything that should raise risk above what intake said.
 3. Prefer the smallest change that satisfies the ticket. Follow existing patterns in the repo.
-4. If a product decision is genuinely missing, return `needs_human` with the exact question.
+4. If a product decision is genuinely missing, return `needs_human` with `questions`: 1 to 3 short
+   questions, each with the default you would pick. They go to the ticket, and you run again with
+   the answers. If a sensible default is obvious, use it and note it under **Out of scope** or
+   **Risks** instead of asking.
 
 ## data
 ```json
 { "spec_markdown": "# Spec ...", "areas": ["backend", "frontend"], "risk": "low|medium|high",
-  "acceptance_criteria": ["AC1 ...", "AC2 ..."], "open_questions": [] }
+  "acceptance_criteria": ["AC1 ...", "AC2 ..."], "questions": [] }
 ```
 
 ## Access

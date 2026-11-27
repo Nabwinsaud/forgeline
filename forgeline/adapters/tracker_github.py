@@ -44,3 +44,8 @@ class GitHubTracker:
 
     def comment(self, key: str, text: str) -> None:
         run(["gh", "issue", "comment", key, "--repo", self.repo, "--body", text])
+
+    def comments(self, key: str) -> list[dict]:
+        out = run(["gh", "issue", "view", key, "--repo", self.repo, "--json", "comments"]).stdout
+        return [{"at": c["createdAt"], "text": c.get("body", ""), "author": (c.get("author") or {}).get("login")}
+                for c in json.loads(out).get("comments", [])]

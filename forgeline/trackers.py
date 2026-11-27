@@ -50,6 +50,7 @@ def pull(project_name: str | None = None) -> list[dict]:
     project_name = proj["name"]
     tracker = get(config.domain_config(proj)["tracker"], project_name)
     start = config.pipeline()["start"]
+    check_answers(project_name)
     created = []
     for ticket in tracker.list_ready():
         if state.find_by_ticket(project_name, ticket["tracker"], ticket["key"]):
@@ -69,7 +70,53 @@ def on_enter(job: dict, stage: str, reason: str) -> None:
         t.set_status(job["ticket"]["key"], logical)
         if logical == "in_review" and job.get("pr"):
             t.comment(job["ticket"]["key"], f"Factory opened PR: {job['pr'].get('url') or job['pr'].get('ref')}")
-        if logical == "blocked":
+        q = job.get("questions") or {}
+        if logical == "blocked" and q.get("open") and not q.get("posted"):
+            t.comment(job["ticket"]["key"], questions_comment(job))
+            q["posted"] = True
+        elif logical == "blocked":
             t.comment(job["ticket"]["key"], f"Factory paused at `{job.get('paused_stage')}` ({stage}): {reason[:1500]}")
     except Exception as exc:  # tracker outages must not break the factory
         job.setdefault("warnings", []).append(f"tracker sync failed on {stage}: {exc}")
+
+
+FACTORY_PREFIXES = ("Factory ", "Software factory", "Forgeline ")
+
+
+def questions_comment(job: dict) -> str:
+    q = job["questions"]
+    lines = ["Forgeline has a few questions before building this:", ""]
+    lines += [f"{i}. {item}" for i, item in enumerate(q["items"], 1)]
+    lines += ["", "Reply here and the job picks up where it stopped. "
+              f"(Or from a terminal: forgeline answer {job['id']} \"...\")"]
+    return "\n".join(lines)
+
+
+def check_answers(project_name: str | None = None) -> list[dict]:
+    """Resume jobs whose open questions got a reply on the ticket since they were asked."""
+    from . import engine
+    from .util import parse_time
+    resumed = []
+    for job in state.all_jobs():
+        q = job.get("questions") or {}
+        if job.get("status") != "awaiting_human" or not q.get("open"):
+            continue
+        if project_name and job["project"] != project_name:
+            continue
+        try:
+            tracker = get_for(job)
+            if not hasattr(tracker, "comments"):
+                continue
+            asked = parse_time(q["asked_at"])
+            replies = [c for c in tracker.comments(job["ticket"]["key"])
+                       if parse_time(c["at"]) > asked and c.get("text", "").strip()
+                       and not c["text"].lstrip().startswith(FACTORY_PREFIXES)]
+        except Exception as exc:  # a tracker hiccup just means we look again next time
+            job.setdefault("warnings", []).append(f"checking answers failed: {exc}")
+            state.save(job)
+            continue
+        if replies:
+            text = "\n\n".join(c["text"].strip() for c in replies)
+            by = replies[-1].get("author") or "ticket"
+            resumed.append(engine.answer(job["id"], text, by=by))
+    return resumed

@@ -121,6 +121,11 @@ def cmd_status(a):
         lock = f" [running {j['lock']['stage']}]" if j.get("lock") else ""
         print(f"{j['id']:<28} {j['status']:<15} {j['stage']:<12}{lock} risk={j.get('risk')} "
               f"time={secs/60:.1f}m cost=${cost:.2f}  {j['ticket']['title'][:50]}")
+        q = j.get("questions") or {}
+        if q.get("open"):
+            for i, item in enumerate(q["items"], 1):
+                print(f"   ? {i}. {item}")
+            print(f"   answer with: forgeline answer {j['id']} \"...\"  (or reply on the ticket)")
         if a.job:
             if j.get("status_reason"):
                 print(f"   reason: {j['status_reason'][:300]}")
@@ -156,6 +161,11 @@ def cmd_report(a):
     total = sum(s["cost"] for s in stats.values())
     done = by_status.get("complete", 0)
     print(f"\ntotal cost ${total:.2f}" + (f" · ${total/done:.2f} per shipped ticket" if done else ""))
+
+
+def cmd_answer(a):
+    job = engine.answer(a.job, " ".join(a.text))
+    print(f"{job['id']} -> {job['stage']} ({job['status']}). Run `forgeline run` or /forgeline:run to continue.")
 
 
 def cmd_human(a):
@@ -219,6 +229,9 @@ def main(argv=None):
 
     s = sub.add_parser("report", help="pass rate, time and cost per stage")
     s.add_argument("--json", action="store_true"); s.set_defaults(fn=cmd_report)
+
+    s = sub.add_parser("answer", help="answer the questions a job asked, and resume it")
+    s.add_argument("job"); s.add_argument("text", nargs="+"); s.set_defaults(fn=cmd_answer)
 
     s = sub.add_parser("human", help="decide on a paused job")
     s.add_argument("job"); s.add_argument("decision", choices=["approve", "reject", "retry"])

@@ -77,6 +77,14 @@ Watch `forgeline status`. The job runs intake → spec → build → test → se
 approve, then stops at `awaiting_human`, because new repos start with auto-merge off. Review the PR and run
 `/forgeline:approve <job>`.
 
+### When the factory has questions
+
+If a ticket leaves open something that changes what gets built, intake (or the spec writer) asks
+1 to 3 short questions instead of guessing, each with the default it would pick. They're posted on
+the ticket, and `forgeline status` shows them. Reply on the ticket (GitHub, Jira, or the local
+ticket) or run `forgeline answer <job> "..."`. The job picks up again with your answers in every
+agent's brief.
+
 ## 6. Turn it up
 
 After a few good tickets:
