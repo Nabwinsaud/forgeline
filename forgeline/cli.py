@@ -9,6 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from . import __version__, config, doctor, engine, init, runner, state, trackers, watch
+from . import learn as learn_mod
 from .util import FactoryError, parse_time, write_json
 
 
@@ -163,6 +164,19 @@ def cmd_report(a):
     print(f"\ntotal cost ${total:.2f}" + (f" · ${total/done:.2f} per shipped ticket" if done else ""))
 
 
+def cmd_learn(a):
+    res = learn_mod.analyse(min_jobs=a.min_jobs)
+    if a.json:
+        out = {**res, "recurring_findings": [{k: v for k, v in r.items()} for r in res["recurring_findings"]]}
+        print(json.dumps(out, indent=2))
+        return
+    print(learn_mod.render(res))
+    if a.apply:
+        n = learn_mod.apply(res)
+        print(f"\nadded {n} lesson(s) to .factory/domain.md. Review with `git diff`, then commit." if n
+              else "\nnothing new to add to domain.md")
+
+
 def cmd_watch(a):
     watch.watch(interval=a.interval, once=a.once)
 
@@ -237,6 +251,11 @@ def main(argv=None):
 
     s = sub.add_parser("report", help="pass rate, time and cost per stage")
     s.add_argument("--json", action="store_true"); s.set_defaults(fn=cmd_report)
+
+    s = sub.add_parser("learn", help="recurring review findings, flaky checks and cost by ticket size")
+    s.add_argument("--apply", action="store_true", help="append recurring findings to .factory/domain.md")
+    s.add_argument("--min-jobs", type=int, default=2, help="a finding must recur in this many jobs")
+    s.add_argument("--json", action="store_true"); s.set_defaults(fn=cmd_learn)
 
     s = sub.add_parser("watch", help="live view of every job: stage, time, cost, verdicts, questions")
     s.add_argument("--interval", type=float, default=2.0); s.add_argument("--once", action="store_true")
