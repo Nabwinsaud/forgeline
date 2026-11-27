@@ -44,3 +44,7 @@ class LocalTracker:
         t = load_json(self._path(key))
         t.setdefault("comments", []).append({"at": now(), "text": text})
         write_json(self._path(key), t)
+
+    def comments(self, key: str) -> list[dict]:
+        t = load_json(self._path(key))
+        return [{"at": c["at"], "text": c.get("text", ""), "author": c.get("by")} for c in t.get("comments", [])]

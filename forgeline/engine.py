@@ -247,6 +247,10 @@ def _apply_side_effects(job: dict, stage: str, results: list[dict]) -> None:
             (state.job_dir(job["id"]) / "spec.md").write_text(data["spec_markdown"])
         if stage == "spec" and data.get("risk"):
             job["risk"] = data["risk"]  # spec writer may raise risk after deeper look
+        questions = [str(q).strip() for q in (data.get("questions") or []) if str(q).strip()]
+        if r.get("status") == "needs_human" and questions:
+            job["questions"] = {"stage": stage, "asked_at": now(), "items": questions[:5], "open": True,
+                                "by": r.get("agent")}
 
 
 def _sum_usage(results: list[dict]) -> dict:
@@ -275,6 +279,26 @@ def _transition(job: dict, from_stage: str, to: str, reason: str) -> None:
 
 
 # ---------------------------------------------------------------- humans
+
+def answer(job_id: str, text: str, by: str = "human") -> dict:
+    """The ticket author answered the agent's questions: record them and re-run the stage that asked."""
+    job = state.load(job_id)
+    q = job.get("questions") or {}
+    if job["status"] != "awaiting_human" or not q.get("open"):
+        raise FactoryError(f"{job_id} has no open questions (status {job['status']})")
+    text = text.strip()
+    if not text:
+        raise FactoryError("the answer is empty")
+    job.setdefault("answers", []).append({"questions": q["items"], "answer": text, "by": by, "at": now()})
+    q["open"] = False
+    _record(job, "answer", 0, "pass", text[:500], {"by": by})
+    # answering is a fresh attempt at the stage that asked (keeps its history); never out of attempts
+    limit = max_attempts(stage_def(q["stage"]))
+    job["attempts"][q["stage"]] = min(job["attempts"].get(q["stage"], 0), limit - 1)
+    job.update(status="active", stage=q["stage"], lock=None, paused_stage=None)
+    state.save(job)
+    return job
+
 
 def human(job_id: str, decision: str, stage: str | None = None, note: str = "") -> dict:
     job = state.load(job_id)

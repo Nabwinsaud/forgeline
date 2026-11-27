@@ -73,3 +73,8 @@ class JiraTracker:
             {"type": "paragraph", "content": [{"type": "text", "text": line or " "}]}
             for line in text.splitlines()]}}
         self._req("POST", f"/rest/api/3/issue/{key}/comment", body)
+
+    def comments(self, key: str) -> list[dict]:
+        data = self._req("GET", f"/rest/api/3/issue/{key}/comment?orderBy=created&maxResults=100")
+        return [{"at": c["created"], "text": self._adf_text(c.get("body")).strip(),
+                 "author": (c.get("author") or {}).get("displayName")} for c in data.get("comments", [])]

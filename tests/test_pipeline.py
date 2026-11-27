@@ -125,6 +125,58 @@ class DoTest(unittest.TestCase):
         self.assertIsInstance(trackers.get_for(job), LocalTracker)
 
 
+class QuestionsTest(unittest.TestCase):
+    QS = {"questions": ["Should archived groups show? (default: no)", "Who can export? (default: admins)"]}
+
+    def test_intake_asks_then_resumes_with_answers_in_every_brief(self):
+        repo = make_repo("ask")
+        t = add_ticket("Export groups")
+        job_id = trackers.pull()[0]["id"]
+        crew = Crew(script={("intake", 1, "intake"): ("needs_human", self.QS)})
+        crew.run_until_idle()
+        job = state.load(job_id)
+        self.assertEqual(job["status"], "awaiting_human")
+        self.assertTrue(job["questions"]["open"])
+        ticket = load_json(repo / ".factory" / "tickets" / f"{t['key']}.json")
+        posted = ticket["comments"][-1]["text"]
+        self.assertTrue(posted.startswith("Forgeline has a few questions"))
+        self.assertIn("2. Who can export? (default: admins)", posted)
+
+        engine.answer(job_id, "No archived groups. Only admins.")
+        crew.run_until_idle()
+        job = state.load(job_id)
+        self.assertEqual(job["status"], "complete", job.get("status_reason"))
+        brief = (state.briefs_dir(job_id) / "build.1.backend-builder.md").read_text()
+        self.assertIn("Answers from the ticket author", brief)
+        self.assertIn("Only admins.", brief)
+        self.assertIn("Q: Who can export?", brief)
+
+    def test_reply_on_the_ticket_resumes_the_job(self):
+        repo = make_repo("ask-reply")
+        t = add_ticket("Export groups")
+        job_id = trackers.pull()[0]["id"]
+        Crew(script={("intake", 1, "intake"): ("needs_human", self.QS)}).run_until_idle()
+        self.assertEqual(trackers.check_answers(), [])          # our own question comment isn't an answer
+        import time
+        time.sleep(1.1)                                           # replies are compared by timestamp (seconds)
+        LocalTracker({}, config.project()["name"]).comment(t["key"], "no, and admins only")
+        trackers.pull()                                           # pull also checks for answers
+        job = state.load(job_id)
+        self.assertEqual((job["status"], job["stage"]), ("active", "intake"))
+        self.assertEqual(job["answers"][0]["answer"], "no, and admins only")
+
+    def test_needs_human_without_questions_is_a_plain_pause(self):
+        make_repo("ask-none")
+        add_ticket("Legal stuff")
+        job_id = trackers.pull()[0]["id"]
+        Crew(script={("intake", 1, "intake"): ("needs_human", {})}).run_until_idle()
+        job = state.load(job_id)
+        self.assertEqual(job["status"], "awaiting_human")
+        self.assertNotIn("questions", job)
+        with self.assertRaises(Exception):
+            engine.answer(job_id, "whatever")
+
+
 class SafeMergeTest(unittest.TestCase):
     def test_rebases_on_moved_main_and_regates_before_merging(self):
         repo = make_repo("moved", gate="test -f backend/hello.txt && test -f backend/other.txt")

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import json
+import re
 import os
 import subprocess
 from pathlib import Path
@@ -54,7 +55,11 @@ def now() -> str:
 
 
 def parse_time(s: str) -> _dt.datetime:
-    return _dt.datetime.fromisoformat(s)
+    """ISO 8601 from us, GitHub (`...Z`) or Jira (`...000+0000`). Naive times are taken as UTC."""
+    s = s.strip().replace("Z", "+00:00")
+    s = re.sub(r"([+-]\d\d)(\d\d)$", r"\1:\2", s)
+    t = _dt.datetime.fromisoformat(s)
+    return t if t.tzinfo else t.replace(tzinfo=_dt.timezone.utc)
 
 
 def load_json(path: Path, default: Any = None) -> Any:

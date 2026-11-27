@@ -116,6 +116,11 @@ def brief(job: dict, sdef: dict, agent: dict, attempt: int, include_role: bool =
     ctx.append(f"- Domain commands: {json.dumps(dcfg.get('commands', {}))}")
     parts.append("## Job context\n" + "\n".join(ctx))
     parts.append("## Ticket body\n" + (t.get("body") or "(empty)"))
+    if job.get("answers"):
+        qa = []
+        for a in job["answers"]:
+            qa += [f"- Q: {item}" for item in a["questions"]] + [f"- A ({a.get('by', 'human')}): {a['answer']}", ""]
+        parts.append("## Answers from the ticket author (part of the requirements)\n" + "\n".join(qa).strip())
 
     spec_path = state.job_dir(job["id"]) / "spec.md"
     if spec_path.exists() and sdef["id"] != "spec":
