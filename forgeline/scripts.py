@@ -27,6 +27,28 @@ def _git(job_or_path, *args, check=True):
     return sh(["git", *args], cwd=cwd, check=check)
 
 
+def _base_ref(job) -> str:
+    """The latest base to branch from and rebase onto.
+
+    github: fetch the remote base branch and use `origin/<base>`, so a job never starts from (or merges
+    on top of) a stale local checkout. local: the local base branch is the source of truth.
+    """
+    proj = config.project(job["project"])
+    vcfg = config.domain_config(proj)["vcs"]
+    base = vcfg.get("base_branch", "main")
+    if vcfg.get("type", "local") != "github":
+        return base
+    remote = vcfg.get("remote", "origin")
+    proc = _git(proj["repo_path"], "fetch", "--quiet", remote, base, check=False)
+    if proc.returncode != 0:
+        raise RuntimeError(f"git fetch {remote} {base} failed: {(proc.stderr or proc.stdout).strip()[:500]}")
+    return f"{remote}/{base}"
+
+
+def _job_base(job) -> str:
+    return job.get("base_ref") or job.get("base_branch", "main")
+
+
 def workspace(job, sdef):
     """Isolated git worktree per job so jobs can run in parallel without stepping on each other."""
     proj = config.project(job["project"])
@@ -40,15 +62,17 @@ def workspace(job, sdef):
         with exclude.open("a") as f:
             f.write("\n.factory/worktrees/\n")
 
+    base_ref = _base_ref(job)
     if not wt.exists():
         exists = _git(repo, "rev-parse", "--verify", "--quiet", branch, check=False).returncode == 0
         if exists:
             _git(repo, "worktree", "add", str(wt), branch)
         else:
-            _git(repo, "worktree", "add", "-b", branch, str(wt), base)
+            _git(repo, "worktree", "add", "--no-track", "-b", branch, str(wt), base_ref)
     job["worktree"], job["branch"] = str(wt), branch
-    job["base_branch"] = base
-    return "pass", f"worktree {wt} on {branch} from {base}", {"worktree": str(wt), "branch": branch}
+    job["base_branch"], job["base_ref"] = base, base_ref
+    sha = _git(repo, "rev-parse", "--short", base_ref).stdout.strip()
+    return "pass", f"worktree {wt} on {branch} from {base_ref} ({sha})", {"worktree": str(wt), "branch": branch}
 
 
 def gate(job, sdef):
@@ -58,7 +82,7 @@ def gate(job, sdef):
     dirty = _git(job, "status", "--porcelain").stdout.strip()
     if dirty:
         return "fail", f"uncommitted changes in worktree (builders must commit):\n{dirty[:1500]}", {}
-    base = job.get("base_branch", "main")
+    base = _job_base(job)
     if not _git(job, "diff", "--name-only", f"{base}...HEAD").stdout.strip():
         return "fail", "no changes vs base branch", {}
     if not checks.exists():
@@ -80,10 +104,48 @@ def open_pr(job, sdef):
     return "pass", f"PR ready: {pr.get('url') or pr.get('ref')}", pr
 
 
+def _rebase_on_latest(job, sdef, adapter):
+    """Bring the job branch up to date with the latest base and re-run the gate on the new head.
+
+    Returns None when the branch is current (or was rebased and is green), or a (status, summary, data)
+    tuple that sends the job back to the builder: a conflict, or a gate that fails after the rebase.
+    """
+    base_ref = _base_ref(job)
+    job["base_ref"] = base_ref
+    if _git(job, "merge-base", "--is-ancestor", base_ref, "HEAD", check=False).returncode == 0:
+        return None
+    before = _git(job, "rev-parse", "--short", "HEAD").stdout.strip()
+    proc = _git(job, "rebase", base_ref, check=False)
+    if proc.returncode != 0:
+        files = _git(job, "diff", "--name-only", "--diff-filter=U", check=False).stdout.split()
+        _git(job, "rebase", "--abort", check=False)
+        return ("changes_requested",
+                f"merge conflict: {base_ref} moved on since this job started, and the branch no longer "
+                f"rebases cleanly. Conflicting files: {', '.join(files) or 'unknown'}.\n"
+                f"Fix: in the worktree run `git rebase {base_ref}`, resolve each conflict so both your "
+                f"change and the newer change on {base_ref} still work, `git add` the files, "
+                f"`git rebase --continue`, and make sure the tests pass.",
+                {"conflicts": files, "base_ref": base_ref})
+    status, summary, _ = gate(job, sdef)
+    if status != "pass":
+        return ("changes_requested",
+                f"rebased onto the latest {base_ref} cleanly, but the gate fails on the result. Something "
+                f"merged since this job started interacts with this change.\n{summary}",
+                {"base_ref": base_ref})
+    adapter.update_branch(job)
+    after = _git(job, "rev-parse", "--short", "HEAD").stdout.strip()
+    job.setdefault("rebases", []).append({"from": before, "to": after, "onto": base_ref, "at": now()})
+    return None
+
+
 def merge(job, sdef):
     adapter = vcs.get(job)
+    if policy.effective(job).get("rebase_before_merge", True):
+        sent_back = _rebase_on_latest(job, sdef, adapter)
+        if sent_back:
+            return sent_back
     head = _git(job, "rev-parse", "HEAD").stdout.strip()
-    changed = _git(job, "diff", "--name-only", f"{job.get('base_branch', 'main')}...HEAD").stdout.split()
+    changed = _git(job, "diff", "--name-only", f"{_job_base(job)}...HEAD").stdout.split()
     status, reason = policy.merge_decision(job, head, changed)
     if status != "pass":
         return status, reason, {"head": head}

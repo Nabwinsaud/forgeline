@@ -4,7 +4,7 @@ from pathlib import Path
 
 from helpers import Crew, git, make_repo, use_repo
 
-from forgeline import config, engine, state, trackers
+from forgeline import config, engine, scripts, state, trackers
 from forgeline.adapters.tracker_local import LocalTracker
 from forgeline.util import load_json
 
@@ -93,6 +93,101 @@ class PipelineTest(unittest.TestCase):
         task = engine.dispatch()[0]
         self.assertEqual(task["subagent_type"], "forgeline:intake")
         self.assertTrue(task["role_path"].endswith("agents/intake.md"))
+
+
+def commit_on_main(repo, path, text, msg):
+    """Someone else merges to main while the job is in flight."""
+    (repo / path).parent.mkdir(parents=True, exist_ok=True)
+    (repo / path).write_text(text)
+    git(repo, "add", path)
+    git(repo, "commit", "-qm", msg)
+
+
+class SafeMergeTest(unittest.TestCase):
+    def test_rebases_on_moved_main_and_regates_before_merging(self):
+        repo = make_repo("moved", gate="test -f backend/hello.txt && test -f backend/other.txt")
+        commit_on_main(repo, "backend/other.txt", "x\n", "seed other")
+        add_ticket("Say hello")
+        job_id = trackers.pull()[0]["id"]
+
+        def land_other_work(t):
+            if (t["stage"], t["attempt"]) == ("approve", 1):
+                commit_on_main(repo, "backend/notes.txt", "merged meanwhile\n", "other ticket merged")
+
+        Crew(on_task=land_other_work).run_until_idle()
+        job = state.load(job_id)
+        self.assertEqual(job["status"], "complete", job.get("status_reason"))
+        self.assertEqual(len(job["rebases"]), 1)
+        # the merged branch contains the work that landed while it was in review
+        self.assertEqual(git(repo, "show", "main:backend/notes.txt"), "merged meanwhile")
+        self.assertEqual(git(repo, "show", "main:backend/hello.txt"), "attempt 1")
+        merge_run = [h for h in job["history"] if h["stage"] == "merge"]
+        self.assertEqual([h["status"] for h in merge_run], ["pass"])
+
+    def test_conflict_with_moved_main_goes_back_to_builder(self):
+        repo = make_repo("conflict")
+        add_ticket("Say hello")
+        job_id = trackers.pull()[0]["id"]
+
+        def world(t):
+            if (t["stage"], t["attempt"]) == ("approve", 1):
+                commit_on_main(repo, "backend/hello.txt", "someone else's hello\n", "conflicting change")
+            if (t["stage"], t["attempt"], t["agent"]) == ("build", 2, "backend-builder"):
+                git(t["cwd"], "rebase", "-X", "theirs", "main")  # the builder resolves the conflict
+
+        crew = Crew(on_task=world)
+        crew.run_until_idle()
+        job = state.load(job_id)
+        self.assertEqual(job["status"], "complete", job.get("status_reason"))
+        merges = [h["status"] for h in job["history"] if h["stage"] == "merge"]
+        self.assertEqual(merges, ["changes_requested", "pass"])
+        brief2 = (state.briefs_dir(job_id) / "build.2.backend-builder.md").read_text()
+        self.assertIn("merge conflict", brief2)
+        self.assertIn("backend/hello.txt", brief2)
+        self.assertEqual(git(repo, "show", "main:backend/hello.txt"), "attempt 2")
+
+    def test_rebase_can_be_turned_off(self):
+        repo = make_repo("norebase", policy={"auto_merge_max_risk": "low", "protected_paths": [],
+                                              "rebase_before_merge": False})
+        add_ticket("Say hello")
+        job_id = trackers.pull()[0]["id"]
+
+        def land(t):
+            if (t["stage"], t["attempt"]) == ("approve", 1):
+                commit_on_main(repo, "backend/notes.txt", "meanwhile\n", "other")
+
+        Crew(on_task=land).run_until_idle()
+        job = state.load(job_id)
+        self.assertEqual(job["status"], "complete", job.get("status_reason"))
+        self.assertNotIn("rebases", job)
+
+    def test_github_workspace_branches_from_fresh_remote_not_stale_local_main(self):
+        repo = make_repo("stale")
+        origin = repo.parent / "stale-origin.git"
+        git(repo.parent, "clone", "-q", "--bare", str(repo), str(origin))
+        git(repo, "remote", "add", "origin", str(origin))
+        git(repo, "fetch", "-q", "origin")
+        # another machine merges to origin/main; the local main checkout never pulls
+        other = repo.parent / "stale-other"
+        git(repo.parent, "clone", "-q", str(origin), str(other))
+        git(other, "config", "user.email", "o@test")
+        git(other, "config", "user.name", "o")
+        commit_on_main(other, "backend/merged.txt", "from PR #1\n", "PR #1")
+        git(other, "push", "-q", "origin", "main")
+
+        cfg_path = repo / ".factory" / "config.json"
+        cfg = load_json(cfg_path)
+        cfg["vcs"] = {**cfg.get("vcs", {}), "type": "github", "repo": "me/stale", "base_branch": "main"}
+        from forgeline.util import write_json
+        write_json(cfg_path, cfg)
+        config.reload()
+
+        job = {"id": "job-stale", "project": config.project()["name"]}
+        status, summary, _ = scripts.workspace(job, {})
+        self.assertEqual(status, "pass", summary)
+        self.assertEqual(job["base_ref"], "origin/main")
+        self.assertTrue((Path(job["worktree"]) / "backend" / "merged.txt").exists())
+        self.assertFalse((repo / "backend" / "merged.txt").exists())  # local main still stale
 
 
 if __name__ == "__main__":
