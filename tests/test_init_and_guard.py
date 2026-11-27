@@ -16,6 +16,62 @@ def guard(mode, payload, env=None):
                           capture_output=True, env={**os.environ, **(env or {})})
 
 
+class PackTest(unittest.TestCase):
+    def test_add_update_remove_pack_and_its_gate_check(self):
+        from helpers import make_repo
+        from forgeline import config, packs
+        from forgeline.util import load_json
+        repo = make_repo("packs", gate="step() { echo \"==> $*\"; }\n# --- Your business checks go here\nprintf '\\ngate: all checks passed\\n'")
+        names = {p["name"] for p in packs.available()}
+        self.assertTrue({"money", "auth", "api", "web-app"} <= names)
+
+        res = packs.add("money")
+        self.assertIn("checks.sh", res["changed"])
+        packs.add("money")  # re-adding updates in place, never duplicates
+        domain = (repo / ".factory" / "domain.md").read_text()
+        checks = (repo / ".factory" / "checks.sh").read_text()
+        self.assertEqual(domain.count("<!-- pack:money -->"), 1)
+        self.assertEqual(checks.count("# >>> pack:money"), 1)
+        self.assertLess(checks.index("# >>> pack:money"), checks.index("# --- Your business checks go here"))
+        revs = load_json(repo / ".factory" / "config.json")["domain_reviewers"]
+        self.assertEqual([r["name"] for r in revs if r.get("pack") == "money"], ["money-rules"])
+        self.assertEqual(config.validate(), [])
+        self.assertEqual(packs.installed(), ["money"])
+
+        # the money check judges only lines the branch adds
+        git(repo, "add", "-A"); git(repo, "commit", "-qm", "pack")
+        git(repo, "checkout", "-qb", "feature")
+        (repo / "price.py").write_text("def total(items):\n    price = float(items[0])  # bad\n")
+        git(repo, "add", "-A"); git(repo, "commit", "-qm", "float money")
+        env = {**os.environ, "FACTORY_BASE": "main", "PATH": "/usr/bin:/bin"}
+        bad = subprocess.run(["bash", ".factory/checks.sh"], cwd=repo, capture_output=True, text=True, env=env)
+        self.assertNotEqual(bad.returncode, 0, bad.stdout)
+        self.assertIn("floating point", bad.stdout)
+        (repo / "price.py").write_text("def total(items):\n    price_cents = int(items[0])\n")
+        git(repo, "add", "-A"); git(repo, "commit", "-qm", "fix")
+        good = subprocess.run(["bash", ".factory/checks.sh"], cwd=repo, capture_output=True, text=True, env=env)
+        self.assertEqual(good.returncode, 0, good.stdout + good.stderr)
+        git(repo, "checkout", "-q", "main")
+
+        changed = packs.remove("money")
+        self.assertIn("reviewers/money-rules.md", changed)
+        self.assertNotIn("pack:money", (repo / ".factory" / "checks.sh").read_text())
+        self.assertNotIn("pack:money", (repo / ".factory" / "domain.md").read_text())
+        self.assertFalse((repo / ".factory" / "reviewers" / "money-rules.md").exists())
+
+    def test_pack_from_a_folder(self):
+        from helpers import make_repo
+        from forgeline import packs
+        repo = make_repo("packs-folder")
+        src = TMP / "my-pack"
+        src.mkdir()
+        (src / "pack.json").write_text('{"name": "Clinic", "description": "patient data"}')
+        (src / "domain.md").write_text("- Patient records never leave the EU region.\n")
+        res = packs.add(str(src))
+        self.assertEqual(res["pack"], "clinic")
+        self.assertIn("never leave the EU", (repo / ".factory" / "domain.md").read_text())
+
+
 class InitTest(unittest.TestCase):
     def test_detects_go_backend_and_vite_frontend(self):
         repo = TMP / "fullstack"

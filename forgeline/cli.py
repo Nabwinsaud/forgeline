@@ -10,6 +10,7 @@ from pathlib import Path
 
 from . import __version__, config, doctor, engine, init, runner, state, trackers, watch
 from . import learn as learn_mod
+from . import packs as packs_mod
 from .util import FactoryError, parse_time, write_json
 
 
@@ -23,7 +24,9 @@ def cmd_init(a):
             print(f"re-detected: {comps}\nrewrote .factory/checks.sh, areas and commands. Review the diff, then commit.")
         return
     res = init.run(force=a.force, rules=a.rules, tracker=a.tracker, base_branch=a.base)
-    print(json.dumps(res, indent=2) if a.json else init.summary(res))
+    res["packs"] = [packs_mod.add(name.strip())["pack"] for name in (a.packs or "").split(",") if name.strip()]
+    print(json.dumps(res, indent=2) if a.json else init.summary(res)
+          + (f"\nPacks added: {', '.join(res['packs'])}" if res["packs"] else ""))
 
 
 def cmd_doctor(a):
@@ -164,6 +167,28 @@ def cmd_report(a):
     print(f"\ntotal cost ${total:.2f}" + (f" · ${total/done:.2f} per shipped ticket" if done else ""))
 
 
+def cmd_pack(a):
+    if a.sub == "list":
+        try:
+            here = set(packs_mod.installed())
+        except FactoryError:
+            here = set()  # outside a factory repo: just list what's available
+        for p in packs_mod.available():
+            mark = "✓" if p["name"] in here else " "
+            extras = ", ".join(x for x, on in (("gate check", p["checks"]), ("reviewer", p["reviewer"])) if on)
+            print(f" {mark} {p['name']:<10} {p['description']}" + (f"  [{extras}]" if extras else ""))
+        print("\nforgeline pack add <name | folder | git URL>")
+    elif a.sub == "add":
+        res = packs_mod.add(a.source)
+        print(f"added pack {res['pack']}: {', '.join(res['changed'])}")
+        if res["checks"]:
+            print("\nThis pack adds to your gate (.factory/checks.sh). Review it:\n")
+            print("  " + res["checks"].strip().replace("\n", "\n  "))
+        print("\nReview with `git diff .factory`, run `bash .factory/checks.sh`, then commit.")
+    elif a.sub == "remove":
+        print(f"removed pack {a.name}: {', '.join(packs_mod.remove(a.name))}")
+
+
 def cmd_learn(a):
     res = learn_mod.analyse(min_jobs=a.min_jobs)
     if a.json:
@@ -208,6 +233,7 @@ def main(argv=None):
     s.add_argument("--rules", default="auto", help="auto | none | comma list (go,typescript,python)")
     s.add_argument("--tracker", default="local", choices=["local", "github", "jira", "linear"])
     s.add_argument("--base", help="base branch (default: current branch)")
+    s.add_argument("--packs", help="domain packs to add, e.g. money,auth (see `forgeline pack list`)")
     s.add_argument("--checks-only", action="store_true",
                    help="only re-detect the stack and rewrite checks.sh, areas and commands")
     s.add_argument("--json", action="store_true")
@@ -251,6 +277,13 @@ def main(argv=None):
 
     s = sub.add_parser("report", help="pass rate, time and cost per stage")
     s.add_argument("--json", action="store_true"); s.set_defaults(fn=cmd_report)
+
+    pk = sub.add_parser("pack", help="shareable domain rules: money, auth, api, web-app, or your own")
+    pks = pk.add_subparsers(dest="sub", required=True)
+    pks.add_parser("list").set_defaults(fn=cmd_pack)
+    s = pks.add_parser("add"); s.add_argument("source", help="built-in name, folder or git URL")
+    s.set_defaults(fn=cmd_pack)
+    s = pks.add_parser("remove"); s.add_argument("name"); s.set_defaults(fn=cmd_pack)
 
     s = sub.add_parser("learn", help="recurring review findings, flaky checks and cost by ticket size")
     s.add_argument("--apply", action="store_true", help="append recurring findings to .factory/domain.md")

@@ -49,6 +49,25 @@ Commit `.factory/` and `.claude/rules/forgeline/` so your team shares the same f
 
 Add domain experts as reviewers in `.factory/reviewers/` and list them in `config.json → domain_reviewers`.
 
+### Start from a domain pack
+
+Packs are ready-made rules for common kinds of product. Each adds rules to `domain.md`, a reviewer
+that only checks those rules, and (for most) a gate check that judges only the lines a branch adds.
+
+```sh
+forgeline pack list
+forgeline pack add money       # exact amounts, no floats, idempotent charges, append-only ledger
+forgeline pack add auth        # authz on every record, tenant filters, no disabled TLS or hardcoded secrets
+forgeline pack add api         # don't break clients, validate input, one error shape, pagination
+forgeline pack add web-app     # loading/empty/error states, accessibility, no raw HTML
+```
+
+Or `forgeline init --packs money,auth`. Re-adding updates a pack in place; `forgeline pack remove`
+takes it out. A pack is just a folder (`pack.json`, `domain.md`, `reviewer.md`, `checks.sh`), so you
+can write your own and share it: `forgeline pack add ./packs/clinic` or
+`forgeline pack add https://github.com/you/forgeline-pack-clinic`. A pack adds shell commands to your
+gate, so read what it adds before you commit.
+
 ## 4. Connect your tools (optional; local works out of the box)
 
 | Tracker | config.json | Credentials |
