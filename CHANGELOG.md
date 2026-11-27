@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/Nabwinsaud/forgeline/compare/v0.3.1...v0.4.0) (2026-11-27)
+
+
+### Features
+
+* forgeline do starts a job from one sentence ([#36](https://github.com/Nabwinsaud/forgeline/issues/36)) ([be29761](https://github.com/Nabwinsaud/forgeline/commit/be29761d5ecb939dbf3c85decd0da717825d08dc)), closes [#27](https://github.com/Nabwinsaud/forgeline/issues/27)
+* zero-config init for more stacks, monorepos and empty repos ([#38](https://github.com/Nabwinsaud/forgeline/issues/38)) ([a5609b7](https://github.com/Nabwinsaud/forgeline/commit/a5609b7399471f43e6e517e624e9312bce824d80)), closes [#28](https://github.com/Nabwinsaud/forgeline/issues/28)
+
 ## [0.3.1](https://github.com/Nabwinsaud/forgeline/compare/v0.3.0...v0.3.1) (2026-11-27)
 
 
