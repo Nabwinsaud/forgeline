@@ -13,6 +13,14 @@ from .util import FactoryError, parse_time, write_json
 
 
 def cmd_init(a):
+    if a.checks_only:
+        res = init.refresh_checks()
+        if a.json:
+            print(json.dumps(res, indent=2))
+        else:
+            comps = ", ".join(f"{c['dir']} ({c['lang']})" for c in res["components"]) or "nothing yet"
+            print(f"re-detected: {comps}\nrewrote .factory/checks.sh, areas and commands. Review the diff, then commit.")
+        return
     res = init.run(force=a.force, rules=a.rules, tracker=a.tracker, base_branch=a.base)
     print(json.dumps(res, indent=2) if a.json else init.summary(res))
 
@@ -168,6 +176,8 @@ def main(argv=None):
     s.add_argument("--rules", default="auto", help="auto | none | comma list (go,typescript,python)")
     s.add_argument("--tracker", default="local", choices=["local", "github", "jira", "linear"])
     s.add_argument("--base", help="base branch (default: current branch)")
+    s.add_argument("--checks-only", action="store_true",
+                   help="only re-detect the stack and rewrite checks.sh, areas and commands")
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_init)
 

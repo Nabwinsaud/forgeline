@@ -61,7 +61,15 @@ def checks() -> list[tuple[str, str, str]]:
     if domain_md.exists() and "Delete these instructions" in domain_md.read_text():
         add(WARN, "domain.md", "still the template; agents know nothing about your business yet")
 
-    pol = config.factory_config()["policy"]
+    checks_sh = config.domain_dir() / "checks.sh"
+    if checks_sh.exists() and "forgeline init --checks-only" in checks_sh.read_text():
+        from . import init
+        if init.detect(root):
+            add(WARN, "checks.sh", "the repo has code now but the gate checks nothing: run `forgeline init --checks-only`")
+        else:
+            add(WARN, "checks.sh", "no stack yet, so the gate checks nothing until the first ticket adds code")
+
+    pol = {**config.factory_config().get("policy", {}), **dom.get("policy", {})}
     add(OK, "auto-merge", f"max risk = {pol.get('auto_merge_max_risk')}")
     return out
 

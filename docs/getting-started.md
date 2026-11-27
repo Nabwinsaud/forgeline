@@ -15,13 +15,22 @@ Check: `/plugin` lists `forgeline`, and in a shell inside Claude Code `forgeline
 
 Open Claude Code in your app repo and run `/forgeline:init`. It:
 
-1. Detects your stack (Go, Node/TypeScript/React, Python, alone or in `backend/` + `frontend/` style folders).
-2. Writes `.factory/`: `config.json`, a stack-specific `checks.sh` gate, `domain.md`, `reviewers/`, `agents/`.
+1. Detects your stack: Go, Node/TypeScript (React, Vue, Svelte, Next...), Python, Rust, Java/Kotlin
+   (Maven, Gradle), Ruby. At the root, in `backend/` + `frontend/` style folders, or in monorepo
+   `apps/*`, `packages/*`, `services/*`. No language marker? It uses your Makefile's `check`, `lint`
+   and `test` targets.
+2. Writes `.factory/`: `config.json` (areas and the commands your repo already has, using your
+   package manager), a stack-specific `checks.sh` gate (with your CI's check commands listed as
+   comments to pick from), `domain.md`, `reviewers/`, `agents/`.
 3. Installs rule packs into `.claude/rules/forgeline/` (common plus your languages).
 4. Interviews you to fill `domain.md` with your real business rules.
 5. Runs your gate once and fixes the *script* until it matches how your repo is really verified.
 
 CLI equivalent: `forgeline init [--tracker github] [--rules go,typescript]`.
+
+**Starting from an empty repo?** That's fine. With no code yet, the gate passes so the first ticket
+can create the skeleton. Then run `forgeline init --checks-only` to re-detect the stack and rewrite
+`checks.sh`, areas and commands without touching anything else. `forgeline doctor` reminds you.
 
 Commit `.factory/` and `.claude/rules/forgeline/` so your team shares the same factory.
 
