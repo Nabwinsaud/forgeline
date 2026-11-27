@@ -36,9 +36,11 @@ Then, inside **your app repo**:
 
 ```text
 /forgeline:init          # detects your stack, writes .factory/, interviews you about your business
-/forgeline:ticket add a health endpoint
-/forgeline:run           # the factory takes it from here
+/forgeline:do add a health endpoint      # one sentence in, reviewed PR out
 ```
+
+No tracker needed. From a terminal it's `forgeline do "add a health endpoint"`. When you're ready,
+point it at GitHub Issues, Jira or Linear and use `/forgeline:run` to work through the queue.
 
 Requirements: Claude Code, git, Python 3.10+ (macOS/Linux ship it). Optional: `gh`, `gitleaks`, `codex`.
 
@@ -47,7 +49,7 @@ Requirements: Claude Code, git, Python 3.10+ (macOS/Linux ship it). Optional: `g
 | | | |
 |---|---|---|
 | **12 factory agents** | intake, spec-writer, backend/frontend builders, unit & e2e test engineers, security engineer, code / security / UX reviewers, approver, QA validator | each with its own tools (reviewers are read-only), model and preloaded skills |
-| **20 skills** | 7 commands (`/forgeline:run`, `init`, `status`, `approve`, `ticket`, `doctor`, `report`) and 13 engineering skills (TDD, verification, specs, review, security, API design, migrations, Go, React, Python, Playwright, QA, git) | |
+| **21 skills** | 8 commands (`/forgeline:do`, `run`, `init`, `status`, `approve`, `ticket`, `doctor`, `report`) and 13 engineering skills (TDD, verification, specs, review, security, API design, migrations, Go, React, Python, Playwright, QA, git) | |
 | **Engine** | `forgeline` CLI on your PATH: a deterministic state machine with locks, retries, worktrees, a headless runner, metrics | agents judge, code decides |
 | **Guard hooks** | block force-push, agents pushing to main or merging, agents editing the gate/policy, edits to generated code, secrets in code; profiles `minimal` · `standard` · `strict` | active only in repos with `.factory/` |
 | **Rule packs** | always-on standards for common, Go, TypeScript/React, Python, installed into your repo by `init` | |

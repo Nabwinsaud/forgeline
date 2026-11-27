@@ -17,10 +17,10 @@ class LocalTracker:
     def _path(self, key):
         return self.dir / f"{key}.json"
 
-    def add(self, title: str, body: str = "") -> dict:
+    def add(self, title: str, body: str = "", status: str = "ready") -> dict:
         self.dir.mkdir(parents=True, exist_ok=True)
         key = f"T-{len(list(self.dir.glob('*.json'))) + 1:04d}"
-        t = {"key": key, "title": title, "body": body, "status": "ready", "comments": [], "created_at": now()}
+        t = {"key": key, "title": title, "body": body, "status": status, "comments": [], "created_at": now()}
         write_json(self._path(key), t)
         return t
 

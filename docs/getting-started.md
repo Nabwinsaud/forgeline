@@ -58,9 +58,11 @@ Run `forgeline doctor` after every change.
 ## 5. First ticket
 
 ```text
-/forgeline:ticket add GET /healthz returning {"status":"ok"}
-/forgeline:run
+/forgeline:do add GET /healthz returning {"status":"ok"}
 ```
+
+Or from a terminal: `forgeline do "add GET /healthz returning {\"status\":\"ok\"}"` (add `--queue` to
+only enqueue). To batch work instead, `/forgeline:ticket add ...` a few tickets, then `/forgeline:run`.
 
 Watch `forgeline status`. The job runs intake → spec → build → test → security → gate → PR → review →
 approve, then stops at `awaiting_human`, because new repos start with auto-merge off. Review the PR and run

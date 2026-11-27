@@ -35,6 +35,18 @@ def cmd_ticket_list(a):
         print(f"{t['key']:<12} {t['title']}")
 
 
+def cmd_do(a):
+    title = " ".join(a.request).strip()
+    if not title:
+        raise FactoryError('say what you want built, e.g. forgeline do "add a dark mode toggle"')
+    job = trackers.do(title, a.body or "")
+    print(f"started {job['id']}  {job['ticket']['title']}")
+    if a.queue:
+        print("queued. Run `forgeline run` (headless) or /forgeline:run in Claude Code to work on it.")
+        return
+    runner.loop(runner=a.runner, pull=False)
+
+
 def cmd_pull(a):
     jobs = trackers.pull()
     for j in jobs:
@@ -164,6 +176,13 @@ def main(argv=None):
     t = sub.add_parser("ticket", help="local tracker").add_subparsers(dest="sub", required=True)
     s = t.add_parser("add"); s.add_argument("title"); s.add_argument("--body"); s.set_defaults(fn=cmd_ticket_add)
     t.add_parser("list").set_defaults(fn=cmd_ticket_list)
+
+    s = sub.add_parser("do", help='start a job from one sentence: forgeline do "add dark mode"')
+    s.add_argument("request", nargs="+", help="what you want built or fixed")
+    s.add_argument("--body", help="more detail: acceptance criteria, out of scope, links")
+    s.add_argument("--queue", action="store_true", help="only enqueue; don't start the headless runner")
+    s.add_argument("--runner", choices=sorted(runner.RUNNERS))
+    s.set_defaults(fn=cmd_do)
 
     sub.add_parser("pull", help="enqueue ready tickets").set_defaults(fn=cmd_pull)
 
