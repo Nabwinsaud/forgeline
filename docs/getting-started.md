@@ -73,7 +73,9 @@ Run `forgeline doctor` after every change.
 Or from a terminal: `forgeline do "add GET /healthz returning {\"status\":\"ok\"}"` (add `--queue` to
 only enqueue). To batch work instead, `/forgeline:ticket add ...` a few tickets, then `/forgeline:run`.
 
-Watch `forgeline status`. The job runs intake → spec → build → test → security → gate → PR → review →
+Keep `forgeline watch` open in a second pane: a live view of every job, its place in the
+pipeline, time, cost, the latest verdicts and any questions. Afterwards, `forgeline replay <job>`
+tells the whole story: every stage, every agent's verdict and findings, rebases, and the merge. The job runs intake → spec → build → test → security → gate → PR → review →
 approve, then stops at `awaiting_human`, because new repos start with auto-merge off. Review the PR and run
 `/forgeline:approve <job>`.
 
