@@ -56,6 +56,9 @@ def _feedback(job: dict) -> str:
         if h["stage"] == "gate" and h["status"] == "fail":
             chunks.append(f"### gate (deterministic checks)\n{h['summary'][-4000:]}")
             break
+    last = job["history"][-1] if job["history"] else None
+    if last and last["stage"] == "merge" and last["status"] == "changes_requested":
+        chunks.insert(0, f"### merge (base branch moved on)\n{last['summary'][-4000:]}")
     return "\n\n".join(chunks)
 
 

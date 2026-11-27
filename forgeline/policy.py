@@ -7,12 +7,16 @@ from . import config, state
 from .util import RISK_ORDER
 
 
-def merge_decision(job: dict, head_sha: str, changed_files: list[str]) -> tuple[str, str]:
-    """Return (status, reason) where status is pass | needs_human | fail."""
+def effective(job: dict) -> dict:
+    """Factory-wide policy overlaid with the repo's own (the domain harness may tighten or loosen it)."""
     pol = config.factory_config().get("policy", {})
     proj = config.project(job["project"])
-    dpol = config.domain_config(proj).get("policy", {})
-    pol = {**pol, **dpol}  # domain harness may tighten (or loosen) per repo
+    return {**pol, **config.domain_config(proj).get("policy", {})}
+
+
+def merge_decision(job: dict, head_sha: str, changed_files: list[str]) -> tuple[str, str]:
+    """Return (status, reason) where status is pass | needs_human | fail."""
+    pol = effective(job)
 
     if pol.get("require_gate_on_head", True) and job.get("gate_sha") != head_sha:
         return "fail", f"gate ran on {job.get('gate_sha')} but head is {head_sha}; re-run gate"

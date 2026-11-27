@@ -40,6 +40,9 @@ class LocalVcs:
     def open_pr(self, job):
         return {"number": None, "url": None, "ref": job["branch"]}
 
+    def update_branch(self, job):
+        pass  # the branch lives only in this repo
+
     def merge(self, job):
         base = job.get("base_branch", self.cfg.get("base_branch", "main"))
         cur = run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=self.repo).stdout.strip()
@@ -64,7 +67,7 @@ class GitHubVcs:
 
     def open_pr(self, job):
         wt = job["worktree"]
-        run(["git", "push", "-u", self.cfg.get("remote", "origin"), job["branch"]], cwd=wt)
+        self.update_branch(job)
         existing = json.loads(run(["gh", "pr", "list", "--repo", self.gh_repo, "--head", job["branch"],
                                    "--state", "open", "--json", "number,url"]).stdout)
         if existing:
@@ -75,6 +78,12 @@ class GitHubVcs:
         pr = json.loads(run(["gh", "pr", "view", job["branch"], "--repo", self.gh_repo,
                              "--json", "number,url"]).stdout)
         return {"number": pr["number"], "url": pr["url"], "ref": job["branch"]}
+
+    def update_branch(self, job):
+        # The job branch belongs to the factory; after a rebase it is rewritten. --force-with-lease only
+        # overwrites the remote branch if nobody else pushed to it since our last push.
+        run(["git", "push", "--force-with-lease", "-u", self.cfg.get("remote", "origin"), job["branch"]],
+            cwd=job["worktree"])
 
     def merge(self, job):
         n = str(job["pr"]["number"])

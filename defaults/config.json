@@ -24,6 +24,7 @@
     "auto_merge_max_risk": "low",
     "require_all_reviewers_pass": true,
     "require_gate_on_head": true,
+    "rebase_before_merge": true,
     "protected_paths": ["**/migrations/**", ".github/workflows/**", "**/auth/**", "**/*.tf", ".factory/**"]
   },
 

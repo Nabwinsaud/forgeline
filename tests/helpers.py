@@ -52,8 +52,9 @@ def make_repo(name: str, gate: str = "test -f backend/hello.txt", policy: dict |
 class Crew:
     """Plays every factory agent. `script` maps (stage, attempt, agent) -> (status, data)."""
 
-    def __init__(self, risk="low", script=None):
+    def __init__(self, risk="low", script=None, on_task=None):
         self.risk, self.script, self.seen = risk, script or {}, []
+        self.on_task = on_task  # called with each task before the agent "works", to change the world mid-run
 
     def run_until_idle(self, max_ticks=80):
         for _ in range(max_ticks):
@@ -62,6 +63,8 @@ class Crew:
                 return
             for t in tasks:
                 self.seen.append((t["stage"], t["attempt"], t["agent"]))
+                if self.on_task:
+                    self.on_task(t)
                 status, data = self.script.get((t["stage"], t["attempt"], t["agent"]), ("pass", {}))
                 if t["stage"] == "intake":
                     data = {"risk": self.risk, "size": "small", "areas": ["backend"], **data}

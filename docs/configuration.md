@@ -17,6 +17,7 @@ Three layers, later wins:
 | `commands` | named commands agents should use (`backend_test`, `frontend_lint`, `e2e`, …) |
 | `policy.auto_merge_max_risk` | `none` · `low` · `medium` · `high`. New repos: `none` |
 | `policy.protected_paths` | globs that always require a human to merge |
+| `policy.rebase_before_merge` | default `true`. Before merging, rebase the job on the latest base (`origin/<base>` for github), re-run the gate on the new head, then merge. A conflict, or a gate that fails after the rebase, sends the job back to `build` with the details |
 | `hooks.profile` | `minimal` · `standard` · `strict` (see hooks.md) |
 | `models` | per-role model override, e.g. `{"backend-builder": "opus", "ux-reviewer": "haiku"}` |
 | `domain_reviewers` | `[{"name", "prompt": "reviewers/x.md", "model"}]`: run in parallel with the review stage |
@@ -27,6 +28,9 @@ Three layers, later wins:
 
 Copy `defaults/pipeline.json` to `.factory/pipeline.json` to change stages or transitions for one repo,
 for example to drop `stg`, add a second QA stage, or raise `max_attempts` for `build`.
+
+If you copied the pipeline before v0.4, add `"changes_requested": "build"` to the `merge` stage's `on`
+so merge conflicts go back to the builder instead of blocking the job.
 
 ## Models
 

@@ -89,7 +89,8 @@
       "id": "merge",
       "kind": "script",
       "run": "merge",
-      "on": { "pass": "deploy_dev", "fail": "blocked", "needs_human": "awaiting_human" }
+      "max_attempts": 3,
+      "on": { "pass": "deploy_dev", "fail": "blocked", "needs_human": "awaiting_human", "changes_requested": "build" }
     },
     {
       "id": "deploy_dev",
