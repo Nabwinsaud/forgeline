@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/Nabwinsaud/forgeline/compare/v0.3.0...v0.3.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* rebase on latest base and re-run the gate before merging ([#25](https://github.com/Nabwinsaud/forgeline/issues/25)) ([b0f1777](https://github.com/Nabwinsaud/forgeline/commit/b0f17775e5dc72a1e85c6c3e72f9bfe086413a9a))
+
 ## [0.3.0](https://github.com/Nabwinsaud/forgeline/compare/v0.2.0...v0.3.0) (2026-11-26)
 
 

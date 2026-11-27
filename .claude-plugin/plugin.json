@@ -1,6 +1,6 @@
 {
   "name": "forgeline",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Agentic software factory harness: ticket to shipped feature with factory agents, a deterministic gate, merge policy in code, guard hooks and pluggable trackers.",
   "author": {
     "name": "Nabwinsaud",
