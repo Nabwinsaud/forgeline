@@ -117,15 +117,20 @@ See [docs/getting-started.md](docs/getting-started.md), [docs/configuration.md](
 
 ## What's next
 
+**Just shipped:** `forgeline do` (one sentence in, no tracker needed), zero-config setup for most
+stacks and monorepos, intake that asks questions instead of guessing, `forgeline watch` and
+`replay`, `forgeline learn` (repeated review findings become rules), domain packs, and
+rebase-and-regate before every merge.
+
 Planned work lives in [milestones](https://github.com/Nabwinsaud/forgeline/milestones). Each one is a single theme:
 
 | Milestone | Goal |
 |---|---|
-| [**v0.4: Safe merges**](https://github.com/Nabwinsaud/forgeline/milestone/1) | rebase on latest main and re-run the gate before every merge; conflicts go back to the builder; agents never hold push credentials; hooks that fail closed |
-| [**v0.5: The plan is the contract**](https://github.com/Nabwinsaud/forgeline/milestone/2) | tests can't be quietly weakened; plan changes need a human; every result is tied to the commit it checked |
-| [**v0.6: Parallel without pain**](https://github.com/Nabwinsaud/forgeline/milestone/3) | file leases between jobs, automatic worktree cleanup, a fast path for tiny tickets |
-| [**v0.7: Easier to adopt**](https://github.com/Nabwinsaud/forgeline/milestone/4) | `create-forgeline` drafts your `domain.md` from the code, plus adapter fixes |
-| Later | team mode: self-hosted server, shared job state, humans only see opened PRs |
+| [**Safe merges**](https://github.com/Nabwinsaud/forgeline/milestone/1) | agents never hold push credentials; hooks that fail closed |
+| [**The plan is the contract**](https://github.com/Nabwinsaud/forgeline/milestone/2) | tests can't be quietly weakened; plan changes need a human; every result is tied to the commit it checked |
+| [**Parallel without pain**](https://github.com/Nabwinsaud/forgeline/milestone/3) | file leases between jobs, automatic worktree cleanup, a fast path for tiny tickets |
+| [**Easier to adopt**](https://github.com/Nabwinsaud/forgeline/milestone/4) | `create-forgeline` drafts your `domain.md` from the code, plus adapter fixes |
+| [**Later**](https://github.com/Nabwinsaud/forgeline/milestone/6) | earned autonomy (shadow mode and a track record before auto-merge), more agent runtimes (Codex, Copilot, Gemini, local models), running as a GitHub Action or on a server |
 
 Ideas and feedback welcome in [issues](https://github.com/Nabwinsaud/forgeline/issues).
 
