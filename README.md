@@ -35,7 +35,7 @@ plugin. See [packages/create-forgeline](packages/create-forgeline).
 Then, inside **your app repo**:
 
 ```text
-/forgeline:init          # detects your stack, writes .factory/, interviews you about your business
+/forgeline:init          # detects your stack (Go, TS, Python, Rust, Java, Ruby, monorepos), writes .factory/
 /forgeline:do add a health endpoint      # one sentence in, reviewed PR out
 ```
 
