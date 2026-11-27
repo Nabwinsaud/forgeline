@@ -4,7 +4,7 @@ from pathlib import Path
 
 from helpers import Crew, git, make_repo, use_repo
 
-from forgeline import config, engine, scripts, state, trackers, watch
+from forgeline import config, engine, learn, scripts, state, trackers, watch
 from forgeline.adapters.tracker_local import LocalTracker
 from forgeline.util import load_json
 
@@ -213,6 +213,48 @@ class WatchTest(unittest.TestCase):
         self.assertIn(f"forgeline answer {job_id}", out)
         self.assertIn("intake ‖", out)
         self.assertIn("spec ·", out)
+
+
+class LearnTest(unittest.TestCase):
+    def test_recurring_findings_become_domain_rules(self):
+        repo = make_repo("learn")
+        for title in ("One", "Two", "Three"):
+            add_ticket(title)
+        ids = [j["id"] for j in trackers.pull()]
+        money = {"findings": [{"severity": "blocking", "issue": "Amounts are stored as float64 instead of paisa",
+                               "fix": "use ledger.Paisa"}]}
+        money2 = {"findings": [{"severity": "major", "issue": "float64 used for amounts; must be paisa int64"}]}
+        nit = {"findings": [{"severity": "nit", "issue": "rename variable x"}]}
+        Crew().run_until_idle()
+        # three shipped jobs; reviewers flagged the same problem (worded differently) in two of them
+        for jid, f in zip(ids, (money, money2, nit)):
+            p = state.results_dir(jid) / "review.1.code-reviewer.json"
+            from forgeline.util import write_json
+            write_json(p, {"status": "changes_requested", "summary": "x", "data": f})
+        res = learn.analyse()
+        rec = res["recurring_findings"]
+        self.assertEqual(len(rec), 1, rec)
+        self.assertEqual(len(rec[0]["jobs"]), 2)
+        self.assertEqual(rec[0]["fix"], "use ledger.Paisa")
+        self.assertIn("small", res["cost_by_size"])
+
+        self.assertEqual(learn.apply(res), 1)
+        domain = (repo / ".factory" / "domain.md").read_text()
+        self.assertIn("## Lessons from past reviews", domain)
+        self.assertIn("paisa", domain.lower())
+        self.assertEqual(learn.apply(res), 0)  # idempotent
+
+    def test_flaky_gate_is_detected(self):
+        make_repo("flaky")
+        add_ticket("Flaky")
+        job_id = trackers.pull()[0]["id"]
+        Crew().run_until_idle()
+        job = state.load(job_id)
+        gate = next(h for h in job["history"] if h["stage"] == "gate")
+        job["history"].insert(job["history"].index(gate), {**gate, "status": "fail", "summary": "timeout in e2e"})
+        state.save(job)
+        flaky = learn.flaky_gate()
+        self.assertTrue(any(f["job"] == job_id for f in flaky))
 
 
 class SafeMergeTest(unittest.TestCase):

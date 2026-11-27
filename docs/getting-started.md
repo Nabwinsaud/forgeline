@@ -87,6 +87,14 @@ the ticket, and `forgeline status` shows them. Reply on the ticket (GitHub, Jira
 ticket) or run `forgeline answer <job> "..."`. The job picks up again with your answers in every
 agent's brief.
 
+### Let it learn
+
+After a handful of jobs, run `forgeline learn`. It finds problems reviewers keep flagging across
+jobs (those belong in `domain.md` or `checks.sh`, so builders get them right first time), gate
+checks that fail and then pass on the same commit (flaky), and what tickets of each size really
+cost. `forgeline learn --apply` appends the recurring ones to `domain.md` for you to review, and
+`/forgeline:learn` has an agent decide which should be a rule and which a check.
+
 ## 6. Turn it up
 
 After a few good tickets:
