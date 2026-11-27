@@ -8,7 +8,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from . import __version__, config, doctor, engine, init, runner, state, trackers
+from . import __version__, config, doctor, engine, init, runner, state, trackers, watch
 from .util import FactoryError, parse_time, write_json
 
 
@@ -163,6 +163,14 @@ def cmd_report(a):
     print(f"\ntotal cost ${total:.2f}" + (f" · ${total/done:.2f} per shipped ticket" if done else ""))
 
 
+def cmd_watch(a):
+    watch.watch(interval=a.interval, once=a.once)
+
+
+def cmd_replay(a):
+    print(watch.replay(a.job))
+
+
 def cmd_answer(a):
     job = engine.answer(a.job, " ".join(a.text))
     print(f"{job['id']} -> {job['stage']} ({job['status']}). Run `forgeline run` or /forgeline:run to continue.")
@@ -229,6 +237,13 @@ def main(argv=None):
 
     s = sub.add_parser("report", help="pass rate, time and cost per stage")
     s.add_argument("--json", action="store_true"); s.set_defaults(fn=cmd_report)
+
+    s = sub.add_parser("watch", help="live view of every job: stage, time, cost, verdicts, questions")
+    s.add_argument("--interval", type=float, default=2.0); s.add_argument("--once", action="store_true")
+    s.set_defaults(fn=cmd_watch)
+
+    s = sub.add_parser("replay", help="what happened in a job, step by step, with every agent's verdict")
+    s.add_argument("job"); s.set_defaults(fn=cmd_replay)
 
     s = sub.add_parser("answer", help="answer the questions a job asked, and resume it")
     s.add_argument("job"); s.add_argument("text", nargs="+"); s.set_defaults(fn=cmd_answer)

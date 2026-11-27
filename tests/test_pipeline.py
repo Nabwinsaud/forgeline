@@ -4,7 +4,7 @@ from pathlib import Path
 
 from helpers import Crew, git, make_repo, use_repo
 
-from forgeline import config, engine, scripts, state, trackers
+from forgeline import config, engine, scripts, state, trackers, watch
 from forgeline.adapters.tracker_local import LocalTracker
 from forgeline.util import load_json
 
@@ -175,6 +175,44 @@ class QuestionsTest(unittest.TestCase):
         self.assertNotIn("questions", job)
         with self.assertRaises(Exception):
             engine.answer(job_id, "whatever")
+
+
+class WatchTest(unittest.TestCase):
+    def test_watch_frame_and_replay_tell_the_story(self):
+        make_repo("watch")
+        add_ticket("Say hello")
+        add_ticket("Export groups")
+        a, b = (j["id"] for j in trackers.pull())
+        Crew(script={("review", 1, "code-reviewer"): ("changes_requested", {"findings": [{"issue": "rename var"}]}),
+                     ("intake", 1, "intake"): ("pass", {})}).run_until_idle()
+        # second ticket: ask a question so it waits
+        job_b = state.load(b)
+        self.assertEqual(state.load(a)["status"], "complete")
+
+        out = watch.frame(color=False)
+        self.assertIn("forgeline watch", out)
+        self.assertIn("Say hello", out)
+        self.assertIn("shipped", out)
+
+        story = watch.replay(a)
+        self.assertIn("review#1", story)
+        self.assertIn("code-reviewer: ↺", story)
+        self.assertIn("- rename var", story)
+        self.assertIn("merge#1", story)
+        self.assertIn("total", story)
+        self.assertTrue(job_b)
+
+    def test_watch_shows_open_questions_and_rail(self):
+        make_repo("watch-q")
+        add_ticket("Vague")
+        job_id = trackers.pull()[0]["id"]
+        Crew(script={("intake", 1, "intake"): ("needs_human", {"questions": ["Which screen? (default: home)"]})}
+             ).run_until_idle()
+        out = watch.frame(color=False)
+        self.assertIn("? 1. Which screen? (default: home)", out)
+        self.assertIn(f"forgeline answer {job_id}", out)
+        self.assertIn("intake ‖", out)
+        self.assertIn("spec ·", out)
 
 
 class SafeMergeTest(unittest.TestCase):
