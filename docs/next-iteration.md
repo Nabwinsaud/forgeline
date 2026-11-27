@@ -2,10 +2,10 @@
 
 What to work on next, most important first. Tracked as [milestones](https://github.com/Nabwinsaud/forgeline/milestones) with one issue per item.
 
-## 1. Rebase on latest main before merging
-- [ ] `workspace`: fetch and branch from `origin/<base>`, not the local base branch
-- [ ] `merge`: rebase the job branch on the latest base, re-run the gate, and only merge if it's green on the new head
-- [ ] on a rebase conflict, send it back to `build` with the conflict as feedback instead of going straight to `blocked`
+## 1. Rebase on latest main before merging (done in 0.4)
+- [x] `workspace`: fetch and branch from `origin/<base>`, not the local base branch
+- [x] `merge`: rebase the job branch on the latest base, re-run the gate, and only merge if it's green on the new head
+- [x] on a rebase conflict, send it back to `build` with the conflict as feedback instead of going straight to `blocked`
 
 Today a job can branch from a stale local `main` and get merged without being tested against what
 merged before it.
