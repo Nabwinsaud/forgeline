@@ -1,6 +1,6 @@
 {
   "name": "create-forgeline",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Set up Forgeline, the agentic software factory for Claude Code, in any repo with one command.",
   "keywords": [
     "forgeline",
